@@ -2,7 +2,7 @@
 
 internal class Drink
 {
-    public string strDrink { get; set; }
-    public string strDrinkThumb { get; set; }
-    public int idDrink { get; set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string ImageURL { get; set; }
 }
