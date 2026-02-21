@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using DrinksInfo.Domain.Entities;
 
 namespace DrinksInfo.Application.GetCategories;
 
-internal record GetCategoriesResponse([property: JsonPropertyName("strCategory")] string Name);
+internal record GetCategoriesResponse(List<Category> Drinks);

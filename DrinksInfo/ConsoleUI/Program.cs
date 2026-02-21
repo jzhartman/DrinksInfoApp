@@ -17,11 +17,9 @@ namespace DrinksInfo.ConsoleUI
 
             var mainMenu = provider.GetRequiredService<MainMenuService>();
             mainMenu.Run();
+
         }
     }
-
-
-
 }
 
 

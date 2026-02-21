@@ -2,5 +2,5 @@
 
 internal class Category
 {
-    public string Name { get; set; }
+    public string strCategory { get; set; }
 }

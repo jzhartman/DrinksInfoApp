@@ -13,6 +13,16 @@ internal class MainMenuService
 
     internal async void Run()
     {
+        Console.WriteLine("Printing the list");
+
+        var categories = await _getCategoriesHandler.Handle();
+
+        foreach (var category in categories)
+        {
+            Console.WriteLine(category.Name);
+        }
+        Console.ReadLine();
+
         // Print main menu
         // 
 

@@ -1,4 +1,5 @@
-﻿using DrinksInfo.Application.Interfaces;
+﻿using DrinksInfo.Application.GetCategories;
+using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Entities;
 using System.Net.Http.Json;
 
@@ -19,8 +20,7 @@ internal class Repository : IRepository
 
         var response = await _httpClient.GetFromJsonAsync<GetCategoriesResponse>(url);
 
-        return response?.Drinks ?? new List<Category>();
+        return response.Drinks;
     }
 }
 
-internal record GetCategoriesResponse(List<Category> Drinks);
