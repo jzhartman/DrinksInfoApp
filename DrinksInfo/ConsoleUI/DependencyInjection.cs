@@ -6,10 +6,10 @@ namespace DrinksInfo.ConsoleUI;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddConsoleUI(this IServiceCollection services)
+    public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
-        services.AddScoped<MainMenuService>();
-        services.AddScoped<CategoryListView>();
+        services.AddScoped<GetCategorySelectionService>();
+        services.AddScoped<CategoryListSelectionView>();
 
         return services;
     }

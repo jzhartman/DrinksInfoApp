@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DrinksInfo.Application;
 
-internal static class DependencyInjection
+public static class DependencyInjection
 {
-    internal static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<GetCategoriesHandler>();
 
