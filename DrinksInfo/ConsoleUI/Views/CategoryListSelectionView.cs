@@ -11,6 +11,7 @@ public class CategoryListSelectionView
                             new SelectionPrompt<CategoryListResponse>()
                             .Title("Select a category from below: ")
                             .PageSize(15)
+                            .WrapAround()
                             .UseConverter(category => $"{category.Name}")
                             .AddChoices(categories));
 

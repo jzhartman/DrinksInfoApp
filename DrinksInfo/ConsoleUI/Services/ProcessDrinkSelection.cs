@@ -4,14 +4,14 @@ using DrinksInfo.ConsoleUI.Views;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
-internal class GetCategorySelectionService
+internal class ProcessDrinkSelection
 {
     private readonly CategoryListSelectionView _categorySelection;
     private readonly DrinkListSelectionView _drinkListSelection;
     private readonly GetCategoriesHandler _getCategoriesHandler;
     private readonly GetDrinksSummaryByCategoryNameHandler _getDrinksHandler;
 
-    public GetCategorySelectionService(CategoryListSelectionView categorySelection, DrinkListSelectionView drinkListSelection,
+    public ProcessDrinkSelection(CategoryListSelectionView categorySelection, DrinkListSelectionView drinkListSelection,
                                         GetCategoriesHandler getCategoriesHandler, GetDrinksSummaryByCategoryNameHandler getDrinksHandler)
     {
         _categorySelection = categorySelection;
@@ -26,13 +26,14 @@ internal class GetCategorySelectionService
         {
             Console.Clear();
             var categories = await _getCategoriesHandler.Handle();
+            var categorySelection = _categorySelection.Render(categories.ToArray());
 
-            var selection = _categorySelection.Render(categories.ToArray());
-            int selectionIndex = categories.FindIndex(category => category.Name == selection);
-
+            int selectionIndex = categories.FindIndex(category => category.Name == categorySelection);
 
             var drinks = await _getDrinksHandler.Handle(categories[selectionIndex].Name);
-            _drinkListSelection.Render(categories[selectionIndex].Name, drinks);
+            var drinkSelection = _drinkListSelection.Render(categories[selectionIndex].Name, drinks);
+
+            Console.WriteLine($"Selected drink Id: {drinkSelection}");
 
             Console.WriteLine("Press any key to continue or ESC to quit");
 
@@ -41,5 +42,4 @@ internal class GetCategorySelectionService
             if (keyInfo.Key == ConsoleKey.Escape) return;
         }
     }
-
 }

@@ -16,7 +16,7 @@ internal class Program
 
         var provider = services.BuildServiceProvider();
 
-        var categorySelection = provider.GetRequiredService<GetCategorySelectionService>();
+        var categorySelection = provider.GetRequiredService<ProcessDrinkSelection>();
 
         await categorySelection.Run();
     }
