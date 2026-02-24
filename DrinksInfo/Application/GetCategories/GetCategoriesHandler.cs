@@ -1,31 +1,31 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using DrinksInfo.Application.Interfaces;
+using DrinksInfo.Domain.Entities;
 
 namespace DrinksInfo.Application.GetCategories;
 
 internal class GetCategoriesHandler
 {
-    public async Task<List<GetCategoriesResponse>> Handle()
+    private readonly IDrinkRepository _drinkRepo;
+
+    public GetCategoriesHandler(IDrinkRepository drinkRepo)
     {
-        using var client = new HttpClient();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
-
-        var result = await client.GetFromJsonAsync<GetCategoriesApiResponse>("https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
-
-        return await MapToResponse(result.Drinks);
-
+        _drinkRepo = drinkRepo;
     }
 
-    private async Task<List<GetCategoriesResponse>> MapToResponse(List<CategoryApi> categories)
+    public async Task<List<CategoryListResponse>> Handle()
     {
-        var output = new List<GetCategoriesResponse>();
+        var result = await _drinkRepo.GetCategoryList();
+
+        return await MapToResponse(result);
+    }
+
+    private async Task<List<CategoryListResponse>> MapToResponse(List<Category> categories)
+    {
+        var output = new List<CategoryListResponse>();
 
         foreach (var category in categories)
         {
-            output.Add(new GetCategoriesResponse(category.Name));
+            output.Add(new CategoryListResponse(category.Name));
         }
         return output;
     }

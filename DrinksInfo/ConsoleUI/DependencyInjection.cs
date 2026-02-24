@@ -10,6 +10,7 @@ public static class DependencyInjection
     {
         services.AddScoped<GetCategorySelectionService>();
         services.AddScoped<CategoryListSelectionView>();
+        services.AddScoped<DrinkListSelectionView>();
 
         return services;
     }

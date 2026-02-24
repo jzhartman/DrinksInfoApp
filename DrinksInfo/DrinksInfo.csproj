@@ -10,8 +10,6 @@
   <ItemGroup>
     <Folder Include="ConsoleUI\Input\" />
     <Folder Include="ConsoleUI\Output\" />
-    <Folder Include="Domain\Entities\" />
-    <Folder Include="Infrastructure\" />
   </ItemGroup>
 
   <ItemGroup>
