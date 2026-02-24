@@ -39,4 +39,22 @@ public class DrinkRepository : IDrinkRepository
             .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
             .ToList();
     }
+
+    public async Task<DrinkDetailApi> GetDrinkDeailsById(int id)
+    {
+        using var client = new HttpClient();
+
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var result = await client.GetFromJsonAsync<DrinkListApiResponse>($"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id}");
+
+
+
+
+        return result.Drinks
+            .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
+            .ToList();
+    }
 }
