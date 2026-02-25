@@ -11,6 +11,7 @@ public static class DependencyInjection
         services.AddScoped<ProcessDrinkSelection>();
         services.AddScoped<CategoryListSelectionView>();
         services.AddScoped<DrinkListSelectionView>();
+        services.AddScoped<DrinkDetailsView>();
 
         return services;
     }

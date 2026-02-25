@@ -1,4 +1,5 @@
 ﻿using DrinksInfo.Application.GetCategories;
+using DrinksInfo.Application.GetDrinkDetailsById;
 using DrinksInfo.Application.GetDrinksFromCategory;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<GetCategoriesHandler>();
         services.AddScoped<GetDrinksSummaryByCategoryNameHandler>();
+        services.AddScoped<GetDrinkDetailsByIdHandler>();
 
         return services;
     }

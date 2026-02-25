@@ -33,14 +33,15 @@ public class DrinkRepository : IDrinkRepository
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var result = await client.GetFromJsonAsync<DrinkListApiResponse>($"https://www.thecocktaildb.com/api/json/v1/1/filter.php?c={categoryName}");
+        var result = await client.GetFromJsonAsync<DrinkListApiResponse>(
+            $"https://www.thecocktaildb.com/api/json/v1/1/filter.php?c={categoryName}");
 
         return result.Drinks
             .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
             .ToList();
     }
 
-    public async Task<DrinkDetailApi> GetDrinkDeailsById(int id)
+    public async Task<Drink> GetDrinkDeailsById(int id)
     {
         using var client = new HttpClient();
 
@@ -48,13 +49,37 @@ public class DrinkRepository : IDrinkRepository
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var result = await client.GetFromJsonAsync<DrinkListApiResponse>($"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id}");
+        var url = $"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id}";
 
+        var result = await client.GetFromJsonAsync<DrinkDetailsApi>(url
+            );
+        var drink = result.Drinks[0];
 
+        var ingredients = ExtractList(drink, "strIngredient", 15);
+        var measurements = ExtractList(drink, "strMeasure", 15);
+        var isAlcoholic = (drink.strAlcoholic.ToUpper() == "ALCOHOLIC") ? true : false;
 
+        return new Drink(
+                new DrinkSummary(drink.idDrink, drink.strDrink, drink.strDrinkThumb, drink.strCategory),
+                isAlcoholic,
+                drink.strGlass,
+                drink.strInstructions,
+                ingredients,
+                measurements);
+    }
 
-        return result.Drinks
-            .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
-            .ToList();
+    private List<string> ExtractList(object apiResponse, string prefix, int max)
+    {
+        var output = new List<string>();
+
+        for (int i = 1; i <= max; i++)
+        {
+            var property = apiResponse.GetType().GetProperty($"{prefix}{i}");
+            var value = property?.GetValue(apiResponse) as string;
+
+            if (!string.IsNullOrWhiteSpace(value))
+                output.Add(value);
+        }
+        return output;
     }
 }
