@@ -31,28 +31,42 @@ internal class ProcessDrinkSelection
 
     public async Task Run()
     {
+        var keyInfo = new ConsoleKeyInfo();
+
         while (true)
         {
             Console.Clear();
             var categories = await _getCategoriesHandler.HandleAsync();
-            var categorySelection = _categorySelection.Render(categories.ToArray());
 
-            int selectionIndex = categories.FindIndex(category => category.Name == categorySelection);
+            while (true)
+            {
+                var categorySelection = _categorySelection.Render(categories.ToArray());
+                int selectionIndex = categories.FindIndex(category => category.Name == categorySelection);
 
-            var drinks = await _getDrinksHandler.Handle(categories[selectionIndex].Name);
-            var drinkSelection = _drinkListSelection.Render(categories[selectionIndex].Name, drinks);
+                var drinks = await _getDrinksHandler.Handle(categories[selectionIndex].Name);
 
-            var drink = await _getDrinkDetailsHandler.HandleAsync(drinkSelection);
-            Console.Clear();
-            var imageData = await _getDrinkImageHandler.Handle(drink.ImageUrl);
+                while (true)
+                {
+                    var drinkSelection = _drinkListSelection.Render(categories[selectionIndex].Name, drinks);
 
-            _drinkDetails.Render(drink, imageData);
+                    var drink = await _getDrinkDetailsHandler.HandleAsync(drinkSelection);
+                    Console.Clear();
+                    var imageData = await _getDrinkImageHandler.Handle(drink.ImageUrl);
 
-            Console.WriteLine("Press any key to continue or ESC to quit");
+                    _drinkDetails.Render(drink, imageData);
 
-            var keyInfo = Console.ReadKey(true);
+                    Console.WriteLine($"Press any key to return to {drink.Category} List or ESC to return to Category Selection");
 
-            if (keyInfo.Key == ConsoleKey.Escape) return;
+                    keyInfo = Console.ReadKey(true);
+                    if (keyInfo.Key == ConsoleKey.Escape) break;
+                }
+
+                Console.Clear();
+                Console.WriteLine($"Press any key to return to Category Selection or ESC to exit app");
+
+                keyInfo = Console.ReadKey(true);
+                if (keyInfo.Key == ConsoleKey.Escape) break;
+            }
         }
     }
 }

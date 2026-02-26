@@ -54,8 +54,7 @@ public class DrinkRepository : IDrinkRepository
 
         var url = $"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id}";
 
-        var result = await client.GetFromJsonAsync<DrinkDetailsApi>(url
-            );
+        var result = await client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
         var drink = result.Drinks[0];
 
         var ingredients = ExtractList(drink, "strIngredient", 15);
@@ -74,7 +73,7 @@ public class DrinkRepository : IDrinkRepository
     public async Task<DrinkImageResponse> GetDrinkImageAsync(string url)
     {
         using var client = new HttpClient();
-        byte[] bytes = await client.GetByteArrayAsync(url);
+        byte[] bytes = await client.GetByteArrayAsync($"{url}/small");
 
         return new DrinkImageResponse(bytes);
     }
