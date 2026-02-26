@@ -13,7 +13,7 @@ internal class GetDrinksSummaryByCategoryNameHandler
 
     public async Task<List<DrinkSummaryResponse>> Handle(string categoryName)
     {
-        var result = await _drinkRepo.GetDrinkListByCategoryName(categoryName);
+        var result = await _drinkRepo.GetDrinkListByCategoryNameAsync(categoryName);
 
         return await MapToResponse(result);
     }

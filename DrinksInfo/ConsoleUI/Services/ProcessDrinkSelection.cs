@@ -1,5 +1,6 @@
 ﻿using DrinksInfo.Application.GetCategories;
 using DrinksInfo.Application.GetDrinkDetailsById;
+using DrinksInfo.Application.GetDrinkImage;
 using DrinksInfo.Application.GetDrinksFromCategory;
 using DrinksInfo.ConsoleUI.Views;
 
@@ -13,10 +14,11 @@ internal class ProcessDrinkSelection
     private readonly GetCategoriesHandler _getCategoriesHandler;
     private readonly GetDrinksSummaryByCategoryNameHandler _getDrinksHandler;
     private readonly GetDrinkDetailsByIdHandler _getDrinkDetailsHandler;
+    private readonly GetDrinkImageHandler _getDrinkImageHandler;
 
     public ProcessDrinkSelection(CategoryListSelectionView categorySelection, DrinkListSelectionView drinkListSelection, DrinkDetailsView drinkDetails,
                                         GetCategoriesHandler getCategoriesHandler, GetDrinksSummaryByCategoryNameHandler getDrinksHandler,
-                                        GetDrinkDetailsByIdHandler getDrinkDetailsHandler)
+                                        GetDrinkDetailsByIdHandler getDrinkDetailsHandler, GetDrinkImageHandler getDrinkImageHandler)
     {
         _categorySelection = categorySelection;
         _drinkListSelection = drinkListSelection;
@@ -24,6 +26,7 @@ internal class ProcessDrinkSelection
         _getCategoriesHandler = getCategoriesHandler;
         _getDrinksHandler = getDrinksHandler;
         _getDrinkDetailsHandler = getDrinkDetailsHandler;
+        _getDrinkImageHandler = getDrinkImageHandler;
     }
 
     public async Task Run()
@@ -31,7 +34,7 @@ internal class ProcessDrinkSelection
         while (true)
         {
             Console.Clear();
-            var categories = await _getCategoriesHandler.Handle();
+            var categories = await _getCategoriesHandler.HandleAsync();
             var categorySelection = _categorySelection.Render(categories.ToArray());
 
             int selectionIndex = categories.FindIndex(category => category.Name == categorySelection);
@@ -39,9 +42,11 @@ internal class ProcessDrinkSelection
             var drinks = await _getDrinksHandler.Handle(categories[selectionIndex].Name);
             var drinkSelection = _drinkListSelection.Render(categories[selectionIndex].Name, drinks);
 
-            var drink = await _getDrinkDetailsHandler.Handle(drinkSelection);
+            var drink = await _getDrinkDetailsHandler.HandleAsync(drinkSelection);
             Console.Clear();
-            _drinkDetails.Render(drink);
+            var imageData = await _getDrinkImageHandler.Handle(drink.ImageUrl);
+
+            _drinkDetails.Render(drink, imageData);
 
             Console.WriteLine("Press any key to continue or ESC to quit");
 

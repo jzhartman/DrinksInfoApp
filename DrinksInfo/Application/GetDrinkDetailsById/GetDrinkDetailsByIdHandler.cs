@@ -10,9 +10,9 @@ public class GetDrinkDetailsByIdHandler
         _drinkRepo = drinkRepo;
     }
 
-    public async Task<DrinkDetailResponse> Handle(int id)
+    public async Task<DrinkDetailResponse> HandleAsync(int id)
     {
-        var result = await _drinkRepo.GetDrinkDeailsById(id);
+        var result = await _drinkRepo.GetDrinkDeailsByIdAsync(id);
 
         return new DrinkDetailResponse(
             result.Summary.Id,

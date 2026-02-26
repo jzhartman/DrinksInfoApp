@@ -1,6 +1,8 @@
-﻿using DrinksInfo.Application.Interfaces;
+﻿using DrinksInfo.Application.GetDrinkImage;
+using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Entities;
 using DrinksInfo.Infrastructure.Models;
+using SixLabors.ImageSharp;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -8,7 +10,7 @@ namespace DrinksInfo.Infrastructure.Repositories;
 
 public class DrinkRepository : IDrinkRepository
 {
-    public async Task<List<Category>> GetCategoryList()
+    public async Task<List<Category>> GetCategoryListAsync()
     {
         using var client = new HttpClient();
 
@@ -16,14 +18,15 @@ public class DrinkRepository : IDrinkRepository
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var result = await client.GetFromJsonAsync<CategoryListApiResponse>("https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
+        var result = await client.GetFromJsonAsync<CategoryListApiResponse>(
+            "https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
 
         return result.Drinks
             .Select(c => new Category(c.Name))
             .ToList();
     }
 
-    public async Task<List<DrinkSummary>> GetDrinkListByCategoryName(string categoryName)
+    public async Task<List<DrinkSummary>> GetDrinkListByCategoryNameAsync(string categoryName)
     {
         categoryName.Replace(" ", "_");
 
@@ -41,7 +44,7 @@ public class DrinkRepository : IDrinkRepository
             .ToList();
     }
 
-    public async Task<Drink> GetDrinkDeailsById(int id)
+    public async Task<Drink> GetDrinkDeailsByIdAsync(int id)
     {
         using var client = new HttpClient();
 
@@ -66,6 +69,14 @@ public class DrinkRepository : IDrinkRepository
                 drink.strInstructions,
                 ingredients,
                 measurements);
+    }
+
+    public async Task<DrinkImageResponse> GetDrinkImageAsync(string url)
+    {
+        using var client = new HttpClient();
+        byte[] bytes = await client.GetByteArrayAsync(url);
+
+        return new DrinkImageResponse(bytes);
     }
 
     private List<string> ExtractList(object apiResponse, string prefix, int max)

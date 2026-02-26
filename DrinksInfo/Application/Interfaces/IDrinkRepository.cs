@@ -1,10 +1,12 @@
-﻿using DrinksInfo.Domain.Entities;
+﻿using DrinksInfo.Application.GetDrinkImage;
+using DrinksInfo.Domain.Entities;
 
 namespace DrinksInfo.Application.Interfaces;
 
 public interface IDrinkRepository
 {
-    Task<List<Category>> GetCategoryList();
-    Task<Drink> GetDrinkDeailsById(int id);
-    Task<List<DrinkSummary>> GetDrinkListByCategoryName(string categoryName);
+    Task<List<Category>> GetCategoryListAsync();
+    Task<Drink> GetDrinkDeailsByIdAsync(int id);
+    Task<DrinkImageResponse> GetDrinkImageAsync(string url);
+    Task<List<DrinkSummary>> GetDrinkListByCategoryNameAsync(string categoryName);
 }

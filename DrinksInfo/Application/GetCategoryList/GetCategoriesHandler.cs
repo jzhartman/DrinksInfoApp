@@ -12,14 +12,14 @@ internal class GetCategoriesHandler
         _drinkRepo = drinkRepo;
     }
 
-    public async Task<List<CategoryListResponse>> Handle()
+    public async Task<List<CategoryListResponse>> HandleAsync()
     {
-        var result = await _drinkRepo.GetCategoryList();
+        var result = await _drinkRepo.GetCategoryListAsync();
 
-        return await MapToResponse(result);
+        return await MapToResponseAsync(result);
     }
 
-    private async Task<List<CategoryListResponse>> MapToResponse(List<Category> categories)
+    private async Task<List<CategoryListResponse>> MapToResponseAsync(List<Category> categories)
     {
         var output = new List<CategoryListResponse>();
 
