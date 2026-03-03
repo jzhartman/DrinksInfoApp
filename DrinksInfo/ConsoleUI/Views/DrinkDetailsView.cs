@@ -1,66 +1,55 @@
 ﻿using DrinksInfo.Application.GetDrinkDetailsById;
-using DrinksInfo.Application.GetDrinkImage;
 using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Views;
 
-internal class DrinkDetailsView
+public class DrinkDetailsView
 {
-    public void Render(DrinkDetailResponse drink, DrinkImageResponse imageData)
+    public void Render(DrinkDetailResponse drink)
     {
-        var table = CreateDrinkDetailsTable(drink);
-        var canvasImage = GenerateCanvasImage(imageData);
+        AnsiConsole.MarkupInterpolated($"[bold blue]Drink:[/] [bold underline green]{drink.Name}[/]");
 
+        AnsiConsole.WriteLine();
+        AnsiConsole.WriteLine();
+        var descriptionTable = GenerateDescriptionTable(drink);
+        AnsiConsole.Write(descriptionTable);
 
-        var columns = new Columns(
-        [
-            canvasImage,
-            table
-        ]);
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[bold blue]Instructions:[/]");
+        AnsiConsole.WriteLine($"{drink.Insructions}");
 
-        AnsiConsole.Write(columns);
-    }
-
-    private CanvasImage GenerateCanvasImage(DrinkImageResponse imageData)
-    {
-        using var stream = new MemoryStream(imageData.Bytes);
-        var canvasImage = new CanvasImage(stream)
-        {
-            MaxWidth = 20
-        };
-
-        return canvasImage;
-    }
-
-    private Table CreateDrinkDetailsTable(DrinkDetailResponse drink)
-    {
         var ingredientMeasurements = CombineIngredientsAndMeasurements(drink.Ingredients, drink.Measurements);
 
+
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[bold blue]Ingredients:[/]");
+        GenerateIngredientsList(ingredientMeasurements);
+    }
+
+    private Table GenerateDescriptionTable(DrinkDetailResponse drink)
+    {
         var table = new Table()
-                        .HideHeaders()
-                        .NoBorder()
-                        //.RoundedBorder()
-                        //.BorderColor(Spectre.Console.Color.Blue)
-                        .ShowRowSeparators();
+                .HideHeaders()
+                .NoBorder();
 
         table.AddColumn("Key");
         table.AddColumn("Value");
+        table.AddColumn("Spacing");
+        table.AddColumn("Key");
+        table.AddColumn("Value");
 
-        table.AddRow("Id", $"{drink.Id}");
-        table.AddRow("Drink", $"{drink.Name}");
-        table.AddRow("Category", $"{drink.Category}");
-        table.AddRow("Alcoholic", $"{drink.IsAlcoholic}");
-        table.AddRow("Glass", $"{drink.Glass}");
-        table.AddRow("Instructions", $"{drink.Insructions}");
-
-        int i = 1;
-        foreach (var item in ingredientMeasurements)
-        {
-            table.AddRow($"Ingredient {i}", $"{item}");
-            i++;
-        }
+        table.AddRow("[blue]Id:[/]", $"{drink.Id}", "      ", "[blue]Category:[/]", $"{drink.Category}");
+        table.AddRow("[blue]Glass:[/]", $"{drink.Glass}", "      ", "[blue]Alcoholic:[/]", $"{drink.IsAlcoholic}");
 
         return table;
+    }
+
+    private void GenerateIngredientsList(List<string> ingredients)
+    {
+        foreach (var item in ingredients)
+        {
+            AnsiConsole.WriteLine($"{item}");
+        }
     }
 
     private List<string> CombineIngredientsAndMeasurements(List<string> ingredients, List<string> measurements)
@@ -73,16 +62,17 @@ internal class DrinkDetailsView
 
         for (int i = 0; i < maxLength; i++)
         {
-            string ingredient = string.Empty;
-            string measurement = string.Empty;
+            string ingredient = ingredients[i].Trim().Replace("\n", ""); ;
+            string measurement = measurements[i].Trim().Replace("\n", ""); ;
 
-            if (i < measurementsCount)
-                measurement = (string.IsNullOrWhiteSpace(measurements[i])) ? "<BLANK>" : measurements[i];
+            if (measurement != "<empty>" && ingredient != "<empty>")
+                output.Add($"{measurement} of {ingredient}");
 
-            if (i < ingredientCount)
-                ingredient = (string.IsNullOrWhiteSpace(ingredients[i])) ? "<BLANK>" : ingredients[i];
+            if (measurement == "<empty>" && ingredient != "<empty>")
+                output.Add($"{ingredient}");
 
-            output.Add($"{measurement} of {ingredient}");
+            if (measurement != "<empty>" && ingredient == "<empty>")
+                output.Add($"{measurement} of <UNKNOWN>");
         }
 
         return output;

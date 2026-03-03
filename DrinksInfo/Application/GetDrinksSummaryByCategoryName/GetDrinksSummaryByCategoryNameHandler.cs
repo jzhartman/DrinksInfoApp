@@ -3,7 +3,7 @@ using DrinksInfo.Domain.Entities;
 
 namespace DrinksInfo.Application.GetDrinksFromCategory;
 
-internal class GetDrinksSummaryByCategoryNameHandler
+public class GetDrinksSummaryByCategoryNameHandler
 {
     private readonly IDrinkRepository _drinkRepo;
     public GetDrinksSummaryByCategoryNameHandler(IDrinkRepository drinkRepo)
