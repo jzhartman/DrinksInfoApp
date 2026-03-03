@@ -10,10 +10,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<GetCategoriesHandler>();
-        services.AddScoped<GetDrinksSummaryByCategoryNameHandler>();
-        services.AddScoped<GetDrinkDetailsByIdHandler>();
-        services.AddScoped<GetDrinkImageHandler>();
+        services.AddTransient<GetCategoriesHandler>();
+        services.AddTransient<GetDrinksSummaryByCategoryNameHandler>();
+        services.AddTransient<GetDrinkDetailsByIdHandler>();
+        services.AddTransient<GetDrinkImageHandler>();
 
         return services;
     }
