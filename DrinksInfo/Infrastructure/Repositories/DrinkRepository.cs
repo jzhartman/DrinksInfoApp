@@ -89,6 +89,10 @@ public class DrinkRepository : IDrinkRepository
 
             if (!string.IsNullOrWhiteSpace(value))
                 output.Add(value);
+            else
+            {
+                output.Add("<empty>");
+            }
         }
         return output;
     }
