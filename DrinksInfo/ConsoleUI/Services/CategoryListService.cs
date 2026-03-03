@@ -36,7 +36,7 @@ internal class CategoryListService
                 var categorySelection = _categorySelection.Render(categories.ToArray());
                 int selectionIndex = categories.FindIndex(category => category.Name == categorySelection);
 
-                var drinks = await _getDrinksHandler.Handle(categories[selectionIndex].Name);
+                var drinks = await _getDrinksHandler.HandleAsync(categories[selectionIndex].Name);
 
                 bool returnToCategoryMenu = false;
 
@@ -44,7 +44,7 @@ internal class CategoryListService
                 {
                     var drinkSelection = _drinkListSelection.Render(categories[selectionIndex].Name, drinks);
 
-                    returnToCategoryMenu = await _drinkDetailService.ManageDrinkDetails(drinkSelection);
+                    returnToCategoryMenu = await _drinkDetailService.ManageDrinkDetailsAsync(drinkSelection);
                 }
             }
         }

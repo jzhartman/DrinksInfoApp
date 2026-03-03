@@ -11,7 +11,7 @@ public class GetDrinksSummaryByCategoryNameHandler
         _drinkRepo = drinkRepo;
     }
 
-    public async Task<List<DrinkSummaryResponse>> Handle(string categoryName)
+    public async Task<List<DrinkSummaryResponse>> HandleAsync(string categoryName)
     {
         var result = await _drinkRepo.GetDrinkListByCategoryNameAsync(categoryName);
 

@@ -27,7 +27,7 @@ public class DrinkDetailService
         _input = input;
     }
 
-    public async Task<bool> ManageDrinkDetails(int drinkSelection)
+    public async Task<bool> ManageDrinkDetailsAsync(int drinkSelection)
     {
         bool returnToCategorySelection = false;
         bool returnToDrinkSelection = false;
@@ -48,7 +48,7 @@ public class DrinkDetailService
             {
                 case ConsoleKey.V:
                     Console.Clear();
-                    var imageData = await _getDrinkImageHandler.Handle(drink.ImageUrl);
+                    var imageData = await _getDrinkImageHandler.HandleAsync(drink.ImageUrl);
                     Console.Clear();
                     _drinkImage.Render(imageData);
                     _input.PressAnyKeyToContinue();

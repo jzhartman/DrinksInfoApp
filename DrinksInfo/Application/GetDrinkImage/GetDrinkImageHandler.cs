@@ -11,7 +11,7 @@ public class GetDrinkImageHandler
         _drinkRepo = drinkRepo;
     }
 
-    public Task<DrinkImageResponse> Handle(string url)
+    public Task<DrinkImageResponse> HandleAsync(string url)
     {
         return _drinkRepo.GetDrinkImageAsync(url);
     }
