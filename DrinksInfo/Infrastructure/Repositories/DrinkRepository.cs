@@ -31,15 +31,15 @@ public class DrinkRepository : IDrinkRepository
 
             return Result<List<Category>>.Success(categories);
         }
-        catch (HttpRequestException ex)
+        catch (HttpRequestException)
         {
             return Result<List<Category>>.Failure(Errors.NetworkError);
         }
-        catch (TaskCanceledException ex)
+        catch (TaskCanceledException)
         {
             return Result<List<Category>>.Failure(Errors.Timeout);
         }
-        catch (JsonException ex)
+        catch (JsonException)
         {
             return Result<List<Category>>.Failure(Errors.InvalidJson);
         }

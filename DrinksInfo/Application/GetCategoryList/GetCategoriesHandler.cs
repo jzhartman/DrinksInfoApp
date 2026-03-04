@@ -1,5 +1,6 @@
 ﻿using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Entities;
+using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.Application.GetCategories;
 
@@ -12,14 +13,19 @@ internal class GetCategoriesHandler
         _drinkRepo = drinkRepo;
     }
 
-    public async Task<List<CategoryListResponse>> HandleAsync()
+    public async Task<Result<List<CategoryListResponse>>> HandleAsync()
     {
         var result = await _drinkRepo.GetCategoryListAsync();
 
-        return await MapToResponseAsync(result);
+        if (result.IsFailure)
+            return Result<List<CategoryListResponse>>.Failure(result.Errors.ToArray());
+        if (result?.Value == null)
+            return Result<List<CategoryListResponse>>.Failure(Errors.GenericNull);
+        else
+            return Result<List<CategoryListResponse>>.Success(await MapToResponseAsync(result.Value));
     }
 
-    private async Task<List<CategoryListResponse>> MapToResponseAsync(List<Category> categories)
+    private static async Task<List<CategoryListResponse>> MapToResponseAsync(List<Category> categories)
     {
         var output = new List<CategoryListResponse>();
 
