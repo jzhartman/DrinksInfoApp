@@ -8,6 +8,6 @@ public interface IDrinkRepository
 {
     Task<Result<List<Category>>> GetCategoryListAsync();
     Task<Result<Drink>> GetDrinkDeailsByIdAsync(int id);
-    Task<DrinkImageResponse> GetDrinkImageAsync(string url);
+    Task<Result<DrinkImageResponse>> GetDrinkImageAsync(string url);
     Task<Result<List<DrinkSummary>>> GetDrinkListByCategoryNameAsync(string categoryName);
 }

@@ -81,10 +81,11 @@ public class DrinkRepository : IDrinkRepository
             var url = $"lookup.php?i={id}";
 
             var response = await _client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
-            var responseDrink = response.Drinks[0];
 
-            if (responseDrink is null)
+            if (response is null)
                 return Result<Drink>.Failure(Errors.EmptyResponse);
+
+            var responseDrink = response.Drinks[0];
 
             var ingredients = ExtractList(responseDrink, "strIngredient", 15);
             var measurements = ExtractList(responseDrink, "strMeasure", 15);
@@ -114,12 +115,26 @@ public class DrinkRepository : IDrinkRepository
         }
     }
 
-    public async Task<DrinkImageResponse> GetDrinkImageAsync(string url)
+    public async Task<Result<DrinkImageResponse>> GetDrinkImageAsync(string url)
     {
-        using var client = new HttpClient();
-        byte[] bytes = await client.GetByteArrayAsync($"{url}/small");
+        try
+        {
+            using var client = new HttpClient();
+            byte[] bytes = await client.GetByteArrayAsync($"{url}/small");
 
-        return new DrinkImageResponse(bytes);
+            if (bytes is null)
+                return Result<DrinkImageResponse>.Failure(Errors.EmptyResponse);
+            else
+                return Result<DrinkImageResponse>.Success(new DrinkImageResponse(bytes));
+        }
+        catch (HttpRequestException)
+        {
+            return Result<DrinkImageResponse>.Failure(Errors.NetworkError);
+        }
+        catch (TaskCanceledException)
+        {
+            return Result<DrinkImageResponse>.Failure(Errors.Timeout);
+        }
     }
 
     private List<string> ExtractList(object apiResponse, string prefix, int max)

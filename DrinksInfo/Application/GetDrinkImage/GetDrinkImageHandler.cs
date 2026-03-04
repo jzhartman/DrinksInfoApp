@@ -1,4 +1,5 @@
 ﻿using DrinksInfo.Application.Interfaces;
+using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.Application.GetDrinkImage;
 
@@ -11,8 +12,15 @@ public class GetDrinkImageHandler
         _drinkRepo = drinkRepo;
     }
 
-    public Task<DrinkImageResponse> HandleAsync(string url)
+    public async Task<Result<DrinkImageResponse>> HandleAsync(string url)
     {
-        return _drinkRepo.GetDrinkImageAsync(url);
+        var response = await _drinkRepo.GetDrinkImageAsync(url);
+
+        if (response.IsFailure)
+            return Result<DrinkImageResponse>.Failure(response.Errors);
+        if (response is null)
+            return Result<DrinkImageResponse>.Failure(Errors.GenericNull);
+        else
+            return Result<DrinkImageResponse>.Success(response.Value);
     }
 }

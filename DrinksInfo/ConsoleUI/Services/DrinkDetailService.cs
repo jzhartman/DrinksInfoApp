@@ -50,11 +50,7 @@ public class DrinkDetailService
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.V:
-                        Console.Clear();
-                        var imageData = await _getDrinkImageHandler.HandleAsync(drinkDetailResult.Value.ImageUrl);
-                        Console.Clear();
-                        _drinkImage.Render(imageData);
-                        _input.PressAnyKeyToContinue();
+                        await ManageViewImage(drinkDetailResult.Value.ImageUrl);
                         break;
                     case ConsoleKey.D:
                         returnToCategorySelection = false;
@@ -79,5 +75,23 @@ public class DrinkDetailService
         }
 
         return returnToCategorySelection;
+    }
+
+    private async Task ManageViewImage(string url)
+    {
+        Console.Clear();
+        var imageResult = await _getDrinkImageHandler.HandleAsync(url);
+
+        if (imageResult.IsSuccess && imageResult.Value != null)
+        {
+            Console.Clear();
+            _drinkImage.Render(imageResult.Value);
+            _input.PressAnyKeyToContinue();
+        }
+        else
+        {
+            _output.OutputErrorMessage(imageResult.Errors);
+            _input.PressAnyKeyToContinue();
+        }
     }
 }
