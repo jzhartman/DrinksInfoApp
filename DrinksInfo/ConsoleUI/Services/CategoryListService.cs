@@ -43,16 +43,23 @@ internal class CategoryListService
                     Console.Clear();
                     var categorySelection = _categorySelection.Render(categoriesResult.Value.ToArray());
                     int selectionIndex = categoriesResult.Value.FindIndex(category => category.Name == categorySelection);
-
-                    var drinks = await _getDrinksHandler.HandleAsync(categoriesResult.Value[selectionIndex].Name);
-
                     bool returnToCategoryMenu = false;
 
-                    while (returnToCategoryMenu == false)
-                    {
-                        var drinkSelection = _drinkListSelection.Render(categoriesResult.Value[selectionIndex].Name, drinks);
+                    var drinksResult = await _getDrinksHandler.HandleAsync(categoriesResult.Value[selectionIndex].Name);
 
-                        returnToCategoryMenu = await _drinkDetailService.ManageDrinkDetailsAsync(drinkSelection);
+                    if (drinksResult.IsSuccess && drinksResult.Value != null)
+                    {
+                        while (returnToCategoryMenu == false)
+                        {
+                            var drinkSelection = _drinkListSelection.Render(categoriesResult.Value[selectionIndex].Name, drinksResult.Value);
+
+                            returnToCategoryMenu = await _drinkDetailService.ManageDrinkDetailsAsync(drinkSelection);
+                        }
+                    }
+                    else
+                    {
+                        _output.OutputErrorMessage(categoriesResult.Errors);
+                        _input.PressAnyKeyToContinue();
                     }
                 }
             }

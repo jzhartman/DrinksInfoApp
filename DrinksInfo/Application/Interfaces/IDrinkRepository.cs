@@ -9,5 +9,5 @@ public interface IDrinkRepository
     Task<Result<List<Category>>> GetCategoryListAsync();
     Task<Drink> GetDrinkDeailsByIdAsync(int id);
     Task<DrinkImageResponse> GetDrinkImageAsync(string url);
-    Task<List<DrinkSummary>> GetDrinkListByCategoryNameAsync(string categoryName);
+    Task<Result<List<DrinkSummary>>> GetDrinkListByCategoryNameAsync(string categoryName);
 }

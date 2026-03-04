@@ -45,14 +45,33 @@ public class DrinkRepository : IDrinkRepository
         }
     }
 
-    public async Task<List<DrinkSummary>> GetDrinkListByCategoryNameAsync(string categoryName)
+    public async Task<Result<List<DrinkSummary>>> GetDrinkListByCategoryNameAsync(string categoryName)
     {
-        var result = await _client.GetFromJsonAsync<DrinkListApiResponse>(
-            $"filter.php?c={categoryName.Replace(" ", "_")}");
+        try
+        {
+            var response = await _client.GetFromJsonAsync<DrinkListApiResponse>($"filter.php?c={categoryName.Replace(" ", "_")}");
 
-        return result.Drinks
-            .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
-            .ToList();
+            if (response?.Drinks is null)
+                return Result<List<DrinkSummary>>.Failure(Errors.EmptyResponse);
+
+            var drinks = response.Drinks
+                .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
+                .ToList();
+
+            return Result<List<DrinkSummary>>.Success(drinks);
+        }
+        catch (HttpRequestException)
+        {
+            return Result<List<DrinkSummary>>.Failure(Errors.NetworkError);
+        }
+        catch (TaskCanceledException)
+        {
+            return Result<List<DrinkSummary>>.Failure(Errors.Timeout);
+        }
+        catch (JsonException)
+        {
+            return Result<List<DrinkSummary>>.Failure(Errors.InvalidJson);
+        }
     }
 
     public async Task<Drink> GetDrinkDeailsByIdAsync(int id)
