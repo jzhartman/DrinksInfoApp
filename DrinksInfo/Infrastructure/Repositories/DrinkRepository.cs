@@ -74,24 +74,44 @@ public class DrinkRepository : IDrinkRepository
         }
     }
 
-    public async Task<Drink> GetDrinkDeailsByIdAsync(int id)
+    public async Task<Result<Drink>> GetDrinkDeailsByIdAsync(int id)
     {
-        var url = $"lookup.php?i={id}";
+        try
+        {
+            var url = $"lookup.php?i={id}";
 
-        var result = await _client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
-        var drink = result.Drinks[0];
+            var response = await _client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
+            var responseDrink = response.Drinks[0];
 
-        var ingredients = ExtractList(drink, "strIngredient", 15);
-        var measurements = ExtractList(drink, "strMeasure", 15);
-        var isAlcoholic = (drink.strAlcoholic.ToUpper() == "ALCOHOLIC") ? true : false;
+            if (responseDrink is null)
+                return Result<Drink>.Failure(Errors.EmptyResponse);
 
-        return new Drink(
-                new DrinkSummary(drink.idDrink, drink.strDrink, drink.strDrinkThumb, drink.strCategory),
-                isAlcoholic,
-                drink.strGlass,
-                drink.strInstructions,
-                ingredients,
-                measurements);
+            var ingredients = ExtractList(responseDrink, "strIngredient", 15);
+            var measurements = ExtractList(responseDrink, "strMeasure", 15);
+            var isAlcoholic = (responseDrink.strAlcoholic.ToUpper() == "ALCOHOLIC") ? true : false;
+
+            var drink = new Drink(
+                    new DrinkSummary(responseDrink.idDrink, responseDrink.strDrink, responseDrink.strDrinkThumb, responseDrink.strCategory),
+                    isAlcoholic,
+                    responseDrink.strGlass,
+                    responseDrink.strInstructions,
+                    ingredients,
+                    measurements);
+
+            return Result<Drink>.Success(drink);
+        }
+        catch (HttpRequestException)
+        {
+            return Result<Drink>.Failure(Errors.NetworkError);
+        }
+        catch (TaskCanceledException)
+        {
+            return Result<Drink>.Failure(Errors.Timeout);
+        }
+        catch (JsonException)
+        {
+            return Result<Drink>.Failure(Errors.InvalidJson);
+        }
     }
 
     public async Task<DrinkImageResponse> GetDrinkImageAsync(string url)

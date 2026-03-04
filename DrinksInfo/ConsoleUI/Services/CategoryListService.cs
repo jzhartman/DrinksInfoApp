@@ -58,7 +58,7 @@ internal class CategoryListService
                     }
                     else
                     {
-                        _output.OutputErrorMessage(categoriesResult.Errors);
+                        _output.OutputErrorMessage(drinksResult.Errors);
                         _input.PressAnyKeyToContinue();
                     }
                 }

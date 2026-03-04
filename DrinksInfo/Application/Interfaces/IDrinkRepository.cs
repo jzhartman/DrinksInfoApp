@@ -7,7 +7,7 @@ namespace DrinksInfo.Application.Interfaces;
 public interface IDrinkRepository
 {
     Task<Result<List<Category>>> GetCategoryListAsync();
-    Task<Drink> GetDrinkDeailsByIdAsync(int id);
+    Task<Result<Drink>> GetDrinkDeailsByIdAsync(int id);
     Task<DrinkImageResponse> GetDrinkImageAsync(string url);
     Task<Result<List<DrinkSummary>>> GetDrinkListByCategoryNameAsync(string categoryName);
 }

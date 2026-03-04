@@ -36,36 +36,45 @@ public class DrinkDetailService
         {
             Console.Clear();
 
-            var drink = await _getDrinkDetailsHandler.HandleAsync(drinkSelection);
-            _drinkDetails.Render(drink);
+            var drinkDetailResult = await _getDrinkDetailsHandler.HandleAsync(drinkSelection);
 
-            Console.WriteLine();
-            Console.WriteLine();
-            _output.RenderDrinkDetailKeyOptions();
-
-            var keyInfo = Console.ReadKey(true);
-            switch (keyInfo.Key)
+            if (drinkDetailResult.IsSuccess && drinkDetailResult.Value != null)
             {
-                case ConsoleKey.V:
-                    Console.Clear();
-                    var imageData = await _getDrinkImageHandler.HandleAsync(drink.ImageUrl);
-                    Console.Clear();
-                    _drinkImage.Render(imageData);
-                    _input.PressAnyKeyToContinue();
-                    break;
-                case ConsoleKey.D:
-                    returnToCategorySelection = false;
-                    returnToDrinkSelection = true;
-                    break;
-                case ConsoleKey.C:
-                    returnToCategorySelection = true;
-                    returnToDrinkSelection = true;
-                    return true;
-                default:
-                    _output.InputErrorMessage();
-                    returnToCategorySelection = false;
-                    returnToDrinkSelection = false;
-                    break;
+                _drinkDetails.Render(drinkDetailResult.Value);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                _output.RenderDrinkDetailKeyOptions();
+
+                var keyInfo = Console.ReadKey(true);
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.V:
+                        Console.Clear();
+                        var imageData = await _getDrinkImageHandler.HandleAsync(drinkDetailResult.Value.ImageUrl);
+                        Console.Clear();
+                        _drinkImage.Render(imageData);
+                        _input.PressAnyKeyToContinue();
+                        break;
+                    case ConsoleKey.D:
+                        returnToCategorySelection = false;
+                        returnToDrinkSelection = true;
+                        break;
+                    case ConsoleKey.C:
+                        returnToCategorySelection = true;
+                        returnToDrinkSelection = true;
+                        return true;
+                    default:
+                        _output.InputErrorMessage();
+                        returnToCategorySelection = false;
+                        returnToDrinkSelection = false;
+                        break;
+                }
+            }
+            else
+            {
+                _output.OutputErrorMessage(drinkDetailResult.Errors);
+                _input.PressAnyKeyToContinue();
             }
         }
 

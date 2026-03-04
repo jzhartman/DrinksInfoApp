@@ -1,4 +1,5 @@
 ﻿using DrinksInfo.Application.Interfaces;
+using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.Application.GetDrinkDetailsById;
 
@@ -10,20 +11,28 @@ public class GetDrinkDetailsByIdHandler
         _drinkRepo = drinkRepo;
     }
 
-    public async Task<DrinkDetailResponse> HandleAsync(int id)
+    public async Task<Result<DrinkDetailResponse>> HandleAsync(int id)
     {
         var result = await _drinkRepo.GetDrinkDeailsByIdAsync(id);
 
-        return new DrinkDetailResponse(
-            result.Summary.Id,
-            result.Summary.Name,
-            result.Summary.ImageUrl,
-            result.Summary.Category,
-            result.IsAlcoholic,
-            result.Glass,
-            result.Instructions,
-            result.Ingredients,
-            result.Measurements);
-    }
+        if (result.IsFailure)
+            return Result<DrinkDetailResponse>.Failure(result.Errors);
+        if (result?.Value == null)
+            return Result<DrinkDetailResponse>.Failure(Errors.GenericNull);
+        else
+        {
+            var drinkDetailResponse = new DrinkDetailResponse(
+                    result.Value.Summary.Id,
+                    result.Value.Summary.Name,
+                    result.Value.Summary.ImageUrl,
+                    result.Value.Summary.Category,
+                    result.Value.IsAlcoholic,
+                    result.Value.Glass,
+                    result.Value.Instructions,
+                    result.Value.Ingredients,
+                    result.Value.Measurements);
 
+            return Result<DrinkDetailResponse>.Success(drinkDetailResponse);
+        }
+    }
 }
