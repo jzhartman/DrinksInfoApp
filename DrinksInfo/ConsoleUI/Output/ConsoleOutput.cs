@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using DrinksInfo.Domain.Validation;
+using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Output;
 
@@ -24,5 +25,13 @@ public class ConsoleOutput
     public void InputErrorMessage()
     {
         AnsiConsole.MarkupLine("[red]ERROR:[/] Invalid key press! Please enter one of the displayed options.");
+    }
+
+    public void OutputErrorMessage(IEnumerable<Error> errors)
+    {
+        foreach (var error in errors)
+        {
+            AnsiConsole.MarkupLine($"[red]ERROR:[/] {error.Description}");
+        }
     }
 }

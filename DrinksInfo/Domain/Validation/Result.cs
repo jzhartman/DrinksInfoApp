@@ -16,4 +16,5 @@ public record Result<T>
 
     public static Result<T> Success(T? value) => new Result<T>(true, value, new List<Error>());
     public static Result<T> Failure(params Error[] errors) => new Result<T>(false, default, errors.ToList());
+    public static Result<T> Failure(IEnumerable<Error> errors) => new Result<T>(false, default, errors.ToList());
 }
