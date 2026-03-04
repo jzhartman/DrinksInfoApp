@@ -1,9 +1,11 @@
 ﻿using DrinksInfo.Application.GetDrinkImage;
 using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Entities;
+using DrinksInfo.Domain.Validation;
 using DrinksInfo.Infrastructure.Models;
 using SixLabors.ImageSharp;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace DrinksInfo.Infrastructure.Repositories;
 
@@ -14,14 +16,33 @@ public class DrinkRepository : IDrinkRepository
     {
         _client = client;
     }
-    public async Task<List<Category>> GetCategoryListAsync()
+    public async Task<Result<List<Category>>> GetCategoryListAsync()
     {
-        var result = await _client.GetFromJsonAsync<CategoryListApiResponse>(
-            "list.php?c=list");
+        try
+        {
+            var response = await _client.GetFromJsonAsync<CategoryListApiResponse>("list.php?c=list");
 
-        return result.Drinks
-            .Select(c => new Category(c.Name))
-            .ToList();
+            if (response?.Drinks is null)
+                return Result<List<Category>>.Failure(Errors.EmptyResponse);
+
+            var categories = response.Drinks
+                .Select(c => new Category(c.Name))
+                .ToList();
+
+            return Result<List<Category>>.Success(categories);
+        }
+        catch (HttpRequestException ex)
+        {
+            return Result<List<Category>>.Failure(Errors.NetworkError);
+        }
+        catch (TaskCanceledException ex)
+        {
+            return Result<List<Category>>.Failure(Errors.Timeout);
+        }
+        catch (JsonException ex)
+        {
+            return Result<List<Category>>.Failure(Errors.InvalidJson);
+        }
     }
 
     public async Task<List<DrinkSummary>> GetDrinkListByCategoryNameAsync(string categoryName)
