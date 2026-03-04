@@ -137,7 +137,7 @@ public class DrinkRepository : IDrinkRepository
         }
     }
 
-    private List<string> ExtractList(object apiResponse, string prefix, int max)
+    private static List<string> ExtractList(object apiResponse, string prefix, int max)
     {
         var output = new List<string>();
 
