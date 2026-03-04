@@ -3,23 +3,21 @@ using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Entities;
 using DrinksInfo.Infrastructure.Models;
 using SixLabors.ImageSharp;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace DrinksInfo.Infrastructure.Repositories;
 
 public class DrinkRepository : IDrinkRepository
 {
+    private readonly HttpClient _client;
+    public DrinkRepository(HttpClient client)
+    {
+        _client = client;
+    }
     public async Task<List<Category>> GetCategoryListAsync()
     {
-        using var client = new HttpClient();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
-
-        var result = await client.GetFromJsonAsync<CategoryListApiResponse>(
-            "https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
+        var result = await _client.GetFromJsonAsync<CategoryListApiResponse>(
+            "list.php?c=list");
 
         return result.Drinks
             .Select(c => new Category(c.Name))
@@ -28,16 +26,8 @@ public class DrinkRepository : IDrinkRepository
 
     public async Task<List<DrinkSummary>> GetDrinkListByCategoryNameAsync(string categoryName)
     {
-        categoryName.Replace(" ", "_");
-
-        using var client = new HttpClient();
-
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
-
-        var result = await client.GetFromJsonAsync<DrinkListApiResponse>(
-            $"https://www.thecocktaildb.com/api/json/v1/1/filter.php?c={categoryName}");
+        var result = await _client.GetFromJsonAsync<DrinkListApiResponse>(
+            $"filter.php?c={categoryName.Replace(" ", "_")}");
 
         return result.Drinks
             .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
@@ -46,15 +36,9 @@ public class DrinkRepository : IDrinkRepository
 
     public async Task<Drink> GetDrinkDeailsByIdAsync(int id)
     {
-        using var client = new HttpClient();
+        var url = $"lookup.php?i={id}";
 
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
-
-        var url = $"https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i={id}";
-
-        var result = await client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
+        var result = await _client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
         var drink = result.Drinks[0];
 
         var ingredients = ExtractList(drink, "strIngredient", 15);
