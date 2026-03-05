@@ -4,7 +4,7 @@ using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.Application.GetCategories;
 
-internal class GetCategoriesHandler
+public class GetCategoriesHandler
 {
     private readonly IDrinkRepository _drinkRepo;
 

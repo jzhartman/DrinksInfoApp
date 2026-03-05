@@ -10,6 +10,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
+        services.AddTransient<MainMenuService>();
         services.AddTransient<CategoryListService>();
         services.AddTransient<DrinkDetailService>();
 
@@ -17,6 +18,7 @@ public static class DependencyInjection
         services.AddTransient<DrinkListSelectionView>();
         services.AddTransient<DrinkDetailsView>();
         services.AddTransient<DrinkImageView>();
+        services.AddTransient<MainMenuView>();
 
         services.AddTransient<ConsoleOutput>();
         services.AddTransient<UserInput>();

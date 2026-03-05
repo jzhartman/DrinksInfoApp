@@ -16,8 +16,8 @@ internal class Program
 
         var provider = services.BuildServiceProvider();
 
-        var categoryList = provider.GetRequiredService<CategoryListService>();
+        var mainMenu = provider.GetRequiredService<MainMenuService>();
 
-        await categoryList.Run();
+        await mainMenu.RunAsync();
     }
 }

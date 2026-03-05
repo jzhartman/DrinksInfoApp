@@ -6,7 +6,7 @@ using DrinksInfo.ConsoleUI.Views;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
-internal class CategoryListService
+public class CategoryListService
 {
     private readonly CategoryListSelectionView _categorySelection;
     private readonly DrinkListSelectionView _drinkListSelection;
@@ -29,7 +29,7 @@ internal class CategoryListService
         _input = input;
     }
 
-    public async Task Run()
+    public async Task RunAsync()
     {
         while (true)
         {
@@ -70,5 +70,10 @@ internal class CategoryListService
             }
 
         }
+    }
+
+    private async Task ManageDrinkDetails()
+    {
+
     }
 }

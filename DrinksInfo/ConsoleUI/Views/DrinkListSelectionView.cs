@@ -3,7 +3,7 @@ using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Views;
 
-internal class DrinkListSelectionView
+public class DrinkListSelectionView
 {
 
     public int Render(string categoryName, List<DrinkSummaryResponse> drinks)

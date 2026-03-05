@@ -52,6 +52,10 @@ public class DrinkDetailService
                     case ConsoleKey.V:
                         await ManageViewImage(drinkDetailResult.Value.ImageUrl);
                         break;
+                    case ConsoleKey.F:
+                        Console.WriteLine("Someday this will add it to your favorites... Until then, try to remember it!");
+                        _input.PressAnyKeyToContinue();
+                        break;
                     case ConsoleKey.D:
                         returnToCategorySelection = false;
                         returnToDrinkSelection = true;

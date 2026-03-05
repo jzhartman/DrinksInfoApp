@@ -16,6 +16,7 @@ public class ConsoleOutput
         table.AddColumn("Operation");
 
         table.AddRow("V", "View Drink Image");
+        table.AddRow("F", "Add Drink to Favorites");
         table.AddRow("D", "Return to Drink Selection");
         table.AddRow("C", "Return to Category Selection");
 
