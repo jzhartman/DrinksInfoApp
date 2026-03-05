@@ -1,6 +1,8 @@
 ﻿using DrinksInfo.Application;
 using DrinksInfo.ConsoleUI.Services;
 using DrinksInfo.Infrastructure;
+using DrinksInfo.Infrastructure.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DrinksInfo.ConsoleUI;
@@ -9,12 +11,18 @@ internal class Program
 {
     static async Task Main(string[] args)
     {
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
         var services = new ServiceCollection();
-        services.AddInfrastructure();
+        services.AddInfrastructure(config);
         services.AddPresentation();
         services.AddApplication();
 
         var provider = services.BuildServiceProvider();
+
+        provider.GetRequiredService<IDatabaseInitializer>().Run();
 
         var mainMenu = provider.GetRequiredService<MainMenuService>();
 
