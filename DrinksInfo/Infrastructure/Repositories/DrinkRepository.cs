@@ -49,7 +49,7 @@ public class DrinkRepository : IDrinkRepository
     {
         try
         {
-            var response = await _client.GetFromJsonAsync<DrinkListApiResponse>($"filter.php?c={categoryName.Replace(" ", "_")}");
+            var response = await _client.GetFromJsonAsync<DrinkSummaryListApiResponse>($"filter.php?c={categoryName.Replace(" ", "_")}");
 
             if (response?.Drinks is null)
                 return Result<List<DrinkSummary>>.Failure(Errors.EmptyResponse);
@@ -80,7 +80,7 @@ public class DrinkRepository : IDrinkRepository
         {
             var url = $"lookup.php?i={id}";
 
-            var response = await _client.GetFromJsonAsync<DrinkDetailsApiResponse>(url);
+            var response = await _client.GetFromJsonAsync<DrinkDetailsListApiResponse>(url);
 
             if (response is null)
                 return Result<Drink>.Failure(Errors.EmptyResponse);

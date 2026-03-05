@@ -1,6 +1,6 @@
 ﻿namespace DrinksInfo.Infrastructure.Models;
 
-public record DrinkDetailApi(
+public record DrinkDetailsApi(
     int idDrink,
     string strDrink,
     string strCategory,
