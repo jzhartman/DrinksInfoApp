@@ -1,5 +1,6 @@
 ﻿using DrinksInfo.Application.GetDrinkDetailsById;
 using DrinksInfo.Application.GetDrinkImage;
+using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Input;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
@@ -27,9 +28,9 @@ public class DrinkDetailService
         _input = input;
     }
 
-    public async Task<bool> ManageDrinkDetailsAsync(int drinkSelection)
+    public async Task<ExitCode> ManageDrinkDetailsAsync(int drinkSelection)
     {
-        bool returnToCategorySelection = false;
+        var exitCode = ExitCode.None;
         bool returnToDrinkSelection = false;
 
         while (returnToDrinkSelection == false)
@@ -57,17 +58,17 @@ public class DrinkDetailService
                         _input.PressAnyKeyToContinue();
                         break;
                     case ConsoleKey.D:
-                        returnToCategorySelection = false;
-                        returnToDrinkSelection = true;
+                        exitCode = ExitCode.DrinkSelection;
                         break;
                     case ConsoleKey.C:
-                        returnToCategorySelection = true;
-                        returnToDrinkSelection = true;
-                        return true;
+                        exitCode = ExitCode.CategorySelection;
+                        break;
+                    case ConsoleKey.M:
+                        exitCode = ExitCode.MainMenu;
+                        break;
                     default:
                         _output.InputErrorMessage();
-                        returnToCategorySelection = false;
-                        returnToDrinkSelection = false;
+                        exitCode = ExitCode.None;
                         break;
                 }
             }
@@ -76,9 +77,14 @@ public class DrinkDetailService
                 _output.OutputErrorMessage(drinkDetailResult.Errors);
                 _input.PressAnyKeyToContinue();
             }
+
+            if (exitCode == ExitCode.DrinkSelection || exitCode == ExitCode.CategorySelection || exitCode == ExitCode.MainMenu)
+                returnToDrinkSelection = true;
+            else
+                returnToDrinkSelection = false;
         }
 
-        return returnToCategorySelection;
+        return exitCode;
     }
 
     private async Task ManageViewImage(string url)

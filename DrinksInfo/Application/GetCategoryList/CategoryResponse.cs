@@ -1,3 +1,3 @@
 ﻿namespace DrinksInfo.Application.GetCategories;
 
-public record CategoryListResponse(string Name);
+public record CategoryResponse(string Name);

@@ -19,6 +19,7 @@ public class ConsoleOutput
         table.AddRow("F", "Add Drink to Favorites");
         table.AddRow("D", "Return to Drink Selection");
         table.AddRow("C", "Return to Category Selection");
+        table.AddRow("M", "Return to Main Menu");
 
         AnsiConsole.Write(table);
     }

@@ -21,7 +21,7 @@ public static class DependencyInjection
                 new MediaTypeWithQualityHeaderValue("application/json"));
         });
 
-        services.AddTransient<GetCategoriesHandler>();
+        services.AddTransient<GetCategoryListHandler>();
         services.AddTransient<GetDrinksSummaryByCategoryNameHandler>();
         services.AddTransient<GetDrinkDetailsByIdHandler>();
         services.AddTransient<GetDrinkImageHandler>();

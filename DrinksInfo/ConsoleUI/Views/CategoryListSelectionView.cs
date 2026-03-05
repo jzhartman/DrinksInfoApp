@@ -5,10 +5,10 @@ namespace DrinksInfo.ConsoleUI.Views;
 
 public class CategoryListSelectionView
 {
-    public string Render(CategoryListResponse[] categories)
+    public string Render(CategoryResponse[] categories)
     {
         var selection = AnsiConsole.Prompt(
-                            new SelectionPrompt<CategoryListResponse>()
+                            new SelectionPrompt<CategoryResponse>()
                             .Title("Select a category from below: ")
                             .PageSize(15)
                             .WrapAround()
