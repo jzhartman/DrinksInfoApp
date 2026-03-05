@@ -66,13 +66,13 @@ public class DrinkDetailsView
             string measurement = measurements[i].Trim().Replace("\n", ""); ;
 
             if (measurement != "<empty>" && ingredient != "<empty>")
-                output.Add($"{measurement} of {ingredient}");
+                output.Add($"{measurement} {ingredient}");
 
             if (measurement == "<empty>" && ingredient != "<empty>")
                 output.Add($"{ingredient}");
 
             if (measurement != "<empty>" && ingredient == "<empty>")
-                output.Add($"{measurement} of <UNKNOWN>");
+                output.Add($"{measurement} <UNKNOWN>");
         }
 
         return output;

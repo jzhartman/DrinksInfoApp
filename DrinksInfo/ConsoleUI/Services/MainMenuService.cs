@@ -38,6 +38,5 @@ public class MainMenuService
 
         Console.WriteLine("Cheers!");
         Console.ReadKey();
-        // Enjoy your drink exit message
     }
 }
