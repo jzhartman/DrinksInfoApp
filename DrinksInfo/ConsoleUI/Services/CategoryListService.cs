@@ -1,6 +1,7 @@
 ﻿using DrinksInfo.Application.GetCategories;
 using DrinksInfo.Application.GetDrinksFromCategory;
 using DrinksInfo.ConsoleUI.Enums;
+using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Input;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
@@ -34,7 +35,8 @@ public class CategoryListService
     public async Task RunAsync()
     {
         Console.Clear();
-        var categoryListResult = await _getCategoryListHandler.HandleAsync();
+        var categoryListResult = await ConsoleStatusHelper.StatusAsync("Fetching category list...", () =>
+                                            _getCategoryListHandler.HandleAsync());
 
         if (categoryListResult.IsSuccess && categoryListResult.Value != null)
             await ManageCategorySelection(categoryListResult.Value);
@@ -53,7 +55,9 @@ public class CategoryListService
             var categorySelection = _categorySelection.Render(category.ToArray());
             int selectionIndex = category.FindIndex(category => category.Name == categorySelection);
 
-            var drinksResult = await _getDrinksHandler.HandleAsync(category[selectionIndex].Name);
+
+            var drinksResult = await ConsoleStatusHelper.StatusAsync($"Fetching drinks in {categorySelection}...", () =>
+                                            _getDrinksHandler.HandleAsync(category[selectionIndex].Name));
 
             if (drinksResult.IsSuccess && drinksResult.Value != null)
                 exitCode = await ManageDrinkDetails(category[selectionIndex].Name, drinksResult.Value);

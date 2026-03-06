@@ -1,6 +1,8 @@
 ﻿using DrinksInfo.Application.GetDrinkDetailsById;
 using DrinksInfo.Application.GetDrinkImage;
+using DrinksInfo.Application.GetDrinksFromCategory;
 using DrinksInfo.ConsoleUI.Enums;
+using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Input;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
@@ -28,7 +30,7 @@ public class DrinkDetailService
         _input = input;
     }
 
-    public async Task<ExitCode> ManageDrinkDetailsAsync(int drinkSelection)
+    public async Task<ExitCode> ManageDrinkDetailsAsync(DrinkSummaryResponse drinkSelection)
     {
         var exitCode = ExitCode.None;
         bool returnToDrinkSelection = false;
@@ -36,8 +38,8 @@ public class DrinkDetailService
         while (returnToDrinkSelection == false)
         {
             Console.Clear();
-
-            var drinkDetailResult = await _getDrinkDetailsHandler.HandleAsync(drinkSelection);
+            var drinkDetailResult = await ConsoleStatusHelper.StatusAsync($"Fetching {drinkSelection.Name} details...", () =>
+                                            _getDrinkDetailsHandler.HandleAsync(drinkSelection.Id));
 
             if (drinkDetailResult.IsSuccess && drinkDetailResult.Value != null)
             {

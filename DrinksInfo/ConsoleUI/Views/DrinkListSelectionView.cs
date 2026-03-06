@@ -6,10 +6,10 @@ namespace DrinksInfo.ConsoleUI.Views;
 public class DrinkListSelectionView
 {
 
-    public int Render(string categoryName, List<DrinkSummaryResponse> drinks)
+    public DrinkSummaryResponse Render(string categoryName, List<DrinkSummaryResponse> drinks)
     {
         Console.Clear();
-        var selection = AnsiConsole.Prompt(
+        return AnsiConsole.Prompt(
                     new SelectionPrompt<DrinkSummaryResponse>()
                     .Title($"Select a drink from the {categoryName} list:")
                     .PageSize(15)
@@ -17,7 +17,5 @@ public class DrinkListSelectionView
                     .SearchPlaceholderText("Begin typing to search drink list...")
                     .UseConverter(d => $"{d.Name}")
                     .AddChoices(drinks));
-
-        return selection.Id;
     }
 }
