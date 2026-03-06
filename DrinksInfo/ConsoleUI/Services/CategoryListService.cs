@@ -35,7 +35,7 @@ public class CategoryListService
     public async Task RunAsync()
     {
         Console.Clear();
-        var categoryListResult = await ConsoleStatusHelper.StatusAsync("Fetching category list...", () =>
+        var categoryListResult = await ConsoleStatusHelper.ShowStatusAsync("Fetching category list...", () =>
                                             _getCategoryListHandler.HandleAsync());
 
         if (categoryListResult.IsSuccess && categoryListResult.Value != null)
@@ -56,7 +56,7 @@ public class CategoryListService
             int selectionIndex = category.FindIndex(category => category.Name == categorySelection);
 
 
-            var drinksResult = await ConsoleStatusHelper.StatusAsync($"Fetching drinks in {categorySelection}...", () =>
+            var drinksResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching drinks in {categorySelection}...", () =>
                                             _getDrinksHandler.HandleAsync(category[selectionIndex].Name));
 
             if (drinksResult.IsSuccess && drinksResult.Value != null)

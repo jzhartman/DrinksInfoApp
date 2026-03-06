@@ -38,7 +38,7 @@ public class DrinkDetailService
         while (returnToDrinkSelection == false)
         {
             Console.Clear();
-            var drinkDetailResult = await ConsoleStatusHelper.StatusAsync($"Fetching {drinkSelection.Name} details...", () =>
+            var drinkDetailResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching {drinkSelection.Name} details...", () =>
                                             _getDrinkDetailsHandler.HandleAsync(drinkSelection.Id));
 
             if (drinkDetailResult.IsSuccess && drinkDetailResult.Value != null)

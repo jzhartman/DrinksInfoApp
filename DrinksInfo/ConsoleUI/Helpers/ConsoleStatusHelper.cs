@@ -4,7 +4,7 @@ namespace DrinksInfo.ConsoleUI.Helpers;
 
 public static class ConsoleStatusHelper
 {
-    public static async Task<T> StatusAsync<T>(string statusMessage, Func<Task<T>> action)
+    public static async Task<T> ShowStatusAsync<T>(string statusMessage, Func<Task<T>> action)
     {
         return await AnsiConsole.Status()
             .Spinner(Spinner.Known.Aesthetic)
