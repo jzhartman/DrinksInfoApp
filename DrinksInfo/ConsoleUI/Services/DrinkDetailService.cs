@@ -2,6 +2,7 @@
 using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
 using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
 using DrinksInfo.Application.Favorites.AddFavoriteDrink;
+using DrinksInfo.Application.Favorites.DeleteFavoriteDrink;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Input;
@@ -15,6 +16,7 @@ public class DrinkDetailService
     private readonly GetDrinkDetailsByIdHandler _getDrinkDetailsHandler;
     private readonly GetDrinkImageHandler _getDrinkImageHandler;
     private readonly AddFavoriteDrinkHandler _addFavoriteHandler;
+    private readonly DeleteFavoriteDrinkByIdHandler _deleteFavoriteHandler;
 
     private readonly DrinkDetailsView _drinkDetails;
     private readonly DrinkImageView _drinkImage;
@@ -23,12 +25,13 @@ public class DrinkDetailService
 
 
     public DrinkDetailService(GetDrinkDetailsByIdHandler getDrinkDetailsHandler, GetDrinkImageHandler getDrinkImageHandler,
-                                AddFavoriteDrinkHandler addFavoriteHandler,
+                                AddFavoriteDrinkHandler addFavoriteHandler, DeleteFavoriteDrinkByIdHandler deleteFavoriteHandler,
                                 DrinkDetailsView drinkDetails, DrinkImageView drinkImage, ConsoleOutput output, UserInput input)
     {
         _getDrinkDetailsHandler = getDrinkDetailsHandler;
         _getDrinkImageHandler = getDrinkImageHandler;
         _addFavoriteHandler = addFavoriteHandler;
+        _deleteFavoriteHandler = deleteFavoriteHandler;
         _drinkDetails = drinkDetails;
         _drinkImage = drinkImage;
         _output = output;
@@ -62,6 +65,9 @@ public class DrinkDetailService
                         break;
                     case ConsoleKey.F:
                         await ManageAddFavorite(drinkDetailResult.Value);
+                        break;
+                    case ConsoleKey.X:
+                        await ManageDeleteFavorite(drinkDetailResult.Value);
                         break;
                     case ConsoleKey.D:
                         exitCode = ExitCode.DrinkSelection;
@@ -116,9 +122,20 @@ public class DrinkDetailService
         var addResult = await _addFavoriteHandler.HandleAsync(new(drinkDetails.Id, drinkDetails.Name, drinkDetails.Category));
 
         if (addResult.IsSuccess)
-            _output.PrintSuccessMessage(drinkDetails.Name);
+            _output.PrintAddFavoriteSuccessMessage(drinkDetails.Name);
         else
             _output.OutputErrorMessage(addResult.Errors);
+
+        _input.PressAnyKeyToContinue();
+    }
+    private async Task ManageDeleteFavorite(DrinkDetailResponse drinkDetails)
+    {
+        var deleteResult = await _deleteFavoriteHandler.HandleAsync(drinkDetails.Id);
+
+        if (deleteResult.IsSuccess)
+            _output.PrintDeleteFavoriteSuccessMessage(drinkDetails.Name);
+        else
+            _output.OutputErrorMessage(deleteResult.Errors);
 
         _input.PressAnyKeyToContinue();
     }

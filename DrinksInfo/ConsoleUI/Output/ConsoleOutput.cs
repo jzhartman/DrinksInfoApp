@@ -17,6 +17,7 @@ public class ConsoleOutput
 
         table.AddRow("V", "View Drink Image");
         table.AddRow("F", "Add Drink to Favorites");
+        table.AddRow("X", "Delete Drink from Favorites");
         table.AddRow("D", "Return to Drink Selection");
         table.AddRow("C", "Return to Category Selection");
         table.AddRow("M", "Return to Main Menu");
@@ -36,8 +37,12 @@ public class ConsoleOutput
             AnsiConsole.MarkupLine($"[red]ERROR:[/] {error.Description}");
         }
     }
-    public void PrintSuccessMessage(string name)
+    public void PrintAddFavoriteSuccessMessage(string name)
     {
         AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Added {name} to favorites list!");
+    }
+    public void PrintDeleteFavoriteSuccessMessage(string name)
+    {
+        AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Deleted {name} from favorites list!");
     }
 }

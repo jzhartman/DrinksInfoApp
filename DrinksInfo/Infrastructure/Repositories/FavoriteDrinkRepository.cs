@@ -79,7 +79,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 
     public async Task<Result> DeleteByIdAsync(int id)
     {
-        string sql = $"delete from FavoriteDrink where Id = {id}";
+        string sql = $"delete from FavoriteDrink where DrinkId = {id}";
 
         try
         {
@@ -91,7 +91,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
             if (result.IsFailure)
                 return Result.Success();
             else
-                return Result.Failure(Errors.AddFailed);
+                return Result.Failure(Errors.DeleteFailed);
         }
         catch (SqliteException ex)
         {

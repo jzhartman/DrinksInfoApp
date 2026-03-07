@@ -47,10 +47,5 @@ public class MainMenuService
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             });
-
-        //AnsiConsole.MarkupLine("[green]Operation complete![/]");
-
-        //Console.WriteLine("Cheers!");
-        //Console.ReadKey();
     }
 }
