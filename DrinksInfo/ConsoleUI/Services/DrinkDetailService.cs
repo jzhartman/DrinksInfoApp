@@ -1,6 +1,7 @@
-﻿using DrinksInfo.Application.GetDrinkDetailsById;
-using DrinksInfo.Application.GetDrinkImage;
-using DrinksInfo.Application.GetDrinksFromCategory;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetDrinkDetailsById;
+using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
+using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
+using DrinksInfo.Application.Favorites.AddFavoriteDrink;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Input;
@@ -13,6 +14,8 @@ public class DrinkDetailService
 {
     private readonly GetDrinkDetailsByIdHandler _getDrinkDetailsHandler;
     private readonly GetDrinkImageHandler _getDrinkImageHandler;
+    private readonly AddFavoriteDrinkHandler _addFavoriteHandler;
+
     private readonly DrinkDetailsView _drinkDetails;
     private readonly DrinkImageView _drinkImage;
     private readonly ConsoleOutput _output;
@@ -20,10 +23,12 @@ public class DrinkDetailService
 
 
     public DrinkDetailService(GetDrinkDetailsByIdHandler getDrinkDetailsHandler, GetDrinkImageHandler getDrinkImageHandler,
+                                AddFavoriteDrinkHandler addFavoriteHandler,
                                 DrinkDetailsView drinkDetails, DrinkImageView drinkImage, ConsoleOutput output, UserInput input)
     {
         _getDrinkDetailsHandler = getDrinkDetailsHandler;
         _getDrinkImageHandler = getDrinkImageHandler;
+        _addFavoriteHandler = addFavoriteHandler;
         _drinkDetails = drinkDetails;
         _drinkImage = drinkImage;
         _output = output;
@@ -56,8 +61,7 @@ public class DrinkDetailService
                         await ManageViewImage(drinkDetailResult.Value.ImageUrl);
                         break;
                     case ConsoleKey.F:
-                        Console.WriteLine("Someday this will add it to your favorites... Until then, try to remember it!");
-                        _input.PressAnyKeyToContinue();
+                        await ManageAddFavorite(drinkDetailResult.Value);
                         break;
                     case ConsoleKey.D:
                         exitCode = ExitCode.DrinkSelection;
@@ -105,5 +109,17 @@ public class DrinkDetailService
             _output.OutputErrorMessage(imageResult.Errors);
             _input.PressAnyKeyToContinue();
         }
+    }
+
+    private async Task ManageAddFavorite(DrinkDetailResponse drinkDetails)
+    {
+        var addResult = await _addFavoriteHandler.HandleAsync(new(drinkDetails.Id, drinkDetails.Name, drinkDetails.Category));
+
+        if (addResult.IsSuccess)
+            _output.PrintSuccessMessage(drinkDetails.Name);
+        else
+            _output.OutputErrorMessage(addResult.Errors);
+
+        _input.PressAnyKeyToContinue();
     }
 }

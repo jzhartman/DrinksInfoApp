@@ -16,7 +16,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
     }
     public async Task<Result> ExistsByIdAsync(int id)
     {
-        string sql = "Select count(1) from FavoriteDrink where DrinkId = @Id";
+        string sql = $"Select count(1) from FavoriteDrink where DrinkId = {id}";
 
         try
         {

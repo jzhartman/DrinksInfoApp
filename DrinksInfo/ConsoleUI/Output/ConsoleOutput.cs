@@ -36,4 +36,8 @@ public class ConsoleOutput
             AnsiConsole.MarkupLine($"[red]ERROR:[/] {error.Description}");
         }
     }
+    public void PrintSuccessMessage(string name)
+    {
+        AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Added {name} to favorites list!");
+    }
 }
