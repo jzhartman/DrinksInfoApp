@@ -1,5 +1,5 @@
-﻿using DrinksInfo.Application.GetCategories;
-using DrinksInfo.Application.GetDrinksFromCategory;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetCategoryList;
+using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Input;

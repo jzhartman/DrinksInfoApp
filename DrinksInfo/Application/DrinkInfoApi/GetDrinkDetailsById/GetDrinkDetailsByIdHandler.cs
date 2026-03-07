@@ -1,7 +1,7 @@
 ﻿using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Validation;
 
-namespace DrinksInfo.Application.GetDrinkDetailsById;
+namespace DrinksInfo.Application.DrinkInfoApi.GetDrinkDetailsById;
 
 public class GetDrinkDetailsByIdHandler
 {

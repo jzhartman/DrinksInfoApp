@@ -1,7 +1,10 @@
-﻿using DrinksInfo.Application.GetCategories;
-using DrinksInfo.Application.GetDrinkDetailsById;
-using DrinksInfo.Application.GetDrinkImage;
-using DrinksInfo.Application.GetDrinksFromCategory;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetCategoryList;
+using DrinksInfo.Application.DrinkInfoApi.GetDrinkDetailsById;
+using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
+using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
+using DrinksInfo.Application.Favorites.AddFavoriteDrink;
+using DrinksInfo.Application.Favorites.DeleteFavoriteDrink;
+using DrinksInfo.Application.Favorites.GetAllFavoriteDrinks;
 using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +28,10 @@ public static class DependencyInjection
         services.AddTransient<GetDrinksSummaryByCategoryNameHandler>();
         services.AddTransient<GetDrinkDetailsByIdHandler>();
         services.AddTransient<GetDrinkImageHandler>();
+
+        services.AddTransient<GetAllFavoriteDrinksHandler>();
+        services.AddTransient<AddFavoriteDrinkHandler>();
+        services.AddTransient<DeleteFavoriteDrinkByIdHandler>();
 
         return services;
     }

@@ -1,4 +1,4 @@
-﻿using DrinksInfo.Application.GetDrinkImage;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
 using DrinksInfo.Domain.Entities;
 using DrinksInfo.Domain.Validation;
 

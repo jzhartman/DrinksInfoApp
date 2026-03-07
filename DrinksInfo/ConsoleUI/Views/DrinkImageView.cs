@@ -1,4 +1,4 @@
-﻿using DrinksInfo.Application.GetDrinkImage;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
 using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Views;

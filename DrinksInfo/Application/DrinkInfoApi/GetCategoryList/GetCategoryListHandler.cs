@@ -2,7 +2,7 @@
 using DrinksInfo.Domain.Entities;
 using DrinksInfo.Domain.Validation;
 
-namespace DrinksInfo.Application.GetCategories;
+namespace DrinksInfo.Application.DrinkInfoApi.GetCategoryList;
 
 public class GetCategoryListHandler
 {
@@ -18,7 +18,7 @@ public class GetCategoryListHandler
         var result = await _drinkRepo.GetCategoryListAsync();
 
         if (result.IsFailure)
-            return Result<List<CategoryResponse>>.Failure(result.Errors.ToArray());
+            return Result<List<CategoryResponse>>.Failure(result.Errors);
         if (result?.Value == null)
             return Result<List<CategoryResponse>>.Failure(Errors.GenericNull);
         else

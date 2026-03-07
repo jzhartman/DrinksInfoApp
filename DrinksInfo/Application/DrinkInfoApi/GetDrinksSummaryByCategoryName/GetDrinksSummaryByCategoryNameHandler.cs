@@ -2,7 +2,7 @@
 using DrinksInfo.Domain.Entities;
 using DrinksInfo.Domain.Validation;
 
-namespace DrinksInfo.Application.GetDrinksFromCategory;
+namespace DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
 
 public class GetDrinksSummaryByCategoryNameHandler
 {

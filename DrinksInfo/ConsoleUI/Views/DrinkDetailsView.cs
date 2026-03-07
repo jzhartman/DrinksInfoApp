@@ -1,4 +1,4 @@
-﻿using DrinksInfo.Application.GetDrinkDetailsById;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetDrinkDetailsById;
 using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Views;

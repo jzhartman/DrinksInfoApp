@@ -1,4 +1,4 @@
-﻿using DrinksInfo.Application.GetDrinkImage;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
 using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Entities;
 using DrinksInfo.Domain.Validation;
@@ -23,7 +23,7 @@ public class DrinkRepository : IDrinkRepository
             var response = await _client.GetFromJsonAsync<CategoryListApiResponse>("list.php?c=list");
 
             if (response?.Drinks is null)
-                return Result<List<Category>>.Failure(Errors.EmptyResponse);
+                return Result<List<Category>>.Failure(Errors.EmptyApiResponse);
 
             var categories = response.Drinks
                 .Select(c => new Category(c.Name))
@@ -52,7 +52,7 @@ public class DrinkRepository : IDrinkRepository
             var response = await _client.GetFromJsonAsync<DrinkSummaryListApiResponse>($"filter.php?c={categoryName.Replace(" ", "_")}");
 
             if (response?.Drinks is null)
-                return Result<List<DrinkSummary>>.Failure(Errors.EmptyResponse);
+                return Result<List<DrinkSummary>>.Failure(Errors.EmptyApiResponse);
 
             var drinks = response.Drinks
                 .Select(d => new DrinkSummary(d.idDrink, d.strDrink, d.strDrinkThumb, categoryName))
@@ -83,7 +83,7 @@ public class DrinkRepository : IDrinkRepository
             var response = await _client.GetFromJsonAsync<DrinkDetailsListApiResponse>(url);
 
             if (response is null)
-                return Result<Drink>.Failure(Errors.EmptyResponse);
+                return Result<Drink>.Failure(Errors.EmptyApiResponse);
 
             var responseDrink = response.Drinks[0];
 
@@ -123,7 +123,7 @@ public class DrinkRepository : IDrinkRepository
             byte[] bytes = await client.GetByteArrayAsync($"{url}/small");
 
             if (bytes is null)
-                return Result<DrinkImageResponse>.Failure(Errors.EmptyResponse);
+                return Result<DrinkImageResponse>.Failure(Errors.EmptyApiResponse);
             else
                 return Result<DrinkImageResponse>.Success(new DrinkImageResponse(bytes));
         }

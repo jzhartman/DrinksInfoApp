@@ -1,4 +1,4 @@
-﻿using DrinksInfo.Application.GetDrinksFromCategory;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
 using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Views;

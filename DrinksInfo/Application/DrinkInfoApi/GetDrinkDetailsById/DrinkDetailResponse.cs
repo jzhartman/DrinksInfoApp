@@ -1,4 +1,4 @@
-﻿namespace DrinksInfo.Application.GetDrinkDetailsById;
+﻿namespace DrinksInfo.Application.DrinkInfoApi.GetDrinkDetailsById;
 
 public record DrinkDetailResponse(
     int Id,

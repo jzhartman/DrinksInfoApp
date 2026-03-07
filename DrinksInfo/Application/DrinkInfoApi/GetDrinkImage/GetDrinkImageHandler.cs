@@ -1,7 +1,7 @@
 ﻿using DrinksInfo.Application.Interfaces;
 using DrinksInfo.Domain.Validation;
 
-namespace DrinksInfo.Application.GetDrinkImage;
+namespace DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
 
 public class GetDrinkImageHandler
 {

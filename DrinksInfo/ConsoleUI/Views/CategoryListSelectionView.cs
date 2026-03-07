@@ -1,4 +1,4 @@
-﻿using DrinksInfo.Application.GetCategories;
+﻿using DrinksInfo.Application.DrinkInfoApi.GetCategoryList;
 using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Views;
