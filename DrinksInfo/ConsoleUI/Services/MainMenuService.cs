@@ -1,5 +1,7 @@
 ﻿using DrinksInfo.ConsoleUI.Enums;
+using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Views;
+using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
@@ -7,10 +9,12 @@ public class MainMenuService
 {
     private readonly MainMenuView _mainMenu;
     private readonly CategoryListService _categoryList;
-    public MainMenuService(MainMenuView mainMenu, CategoryListService categoryList)
+    private readonly FavoriteDrinkServices _favoriteDrinkServices;
+    public MainMenuService(MainMenuView mainMenu, CategoryListService categoryList, FavoriteDrinkServices favoriteDrinkServices)
     {
         _mainMenu = mainMenu;
         _categoryList = categoryList;
+        _favoriteDrinkServices = favoriteDrinkServices;
     }
     public async Task RunAsync()
     {
@@ -28,7 +32,7 @@ public class MainMenuService
                     await _categoryList.RunAsync();
                     break;
                 case MainMenuItem.Favorites:
-                    // Handle favorites
+                    await _favoriteDrinkServices.RunAsync();
                     break;
                 case MainMenuItem.Exit:
                     exitApp = true;
@@ -36,7 +40,17 @@ public class MainMenuService
             }
         }
 
-        Console.WriteLine("Cheers!");
-        Console.ReadKey();
+        AnsiConsole.Status()
+            .Spinner(new CheersSpinnerHelper())
+            .Start("Cheers!", ctx =>
+            {
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+            });
+
+        //AnsiConsole.MarkupLine("[green]Operation complete![/]");
+
+        //Console.WriteLine("Cheers!");
+        //Console.ReadKey();
     }
 }

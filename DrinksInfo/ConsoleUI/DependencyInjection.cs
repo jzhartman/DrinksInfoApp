@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddTransient<MainMenuService>();
         services.AddTransient<CategoryListService>();
         services.AddTransient<DrinkDetailService>();
+        services.AddTransient<FavoriteDrinkServices>();
 
         services.AddTransient<CategoryListSelectionView>();
         services.AddTransient<DrinkListSelectionView>();
