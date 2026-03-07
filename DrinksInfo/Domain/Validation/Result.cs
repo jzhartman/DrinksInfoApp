@@ -1,20 +1,32 @@
 ﻿namespace DrinksInfo.Domain.Validation;
 
-public record Result<T>
+public class Result
 {
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
-    public T? Value { get; }
     public List<Error> Errors { get; }
 
-    private Result(bool isSuccess, T? value, List<Error> errors)
+    protected Result(bool isSuccess, IEnumerable<Error> errors)
     {
         IsSuccess = isSuccess;
-        Value = value;
-        Errors = errors;
+        Errors = errors.ToList();
     }
 
-    public static Result<T> Success(T? value) => new Result<T>(true, value, new List<Error>());
-    public static Result<T> Failure(params Error[] errors) => new Result<T>(false, default, errors.ToList());
-    public static Result<T> Failure(IEnumerable<Error> errors) => new Result<T>(false, default, errors.ToList());
+    public static Result Success() => new(true, new List<Error>());
+    public static Result Failure(params Error[] errors) => new(false, errors);
+    public static Result Failure(IEnumerable<Error> errors) => new(false, errors);
+}
+
+public class Result<T> : Result
+{
+    public T? Value { get; }
+
+    private Result(bool isSuccess, T? value, IEnumerable<Error> errors) : base(isSuccess, errors)
+    {
+        Value = value;
+    }
+
+    public static Result<T> Success(T? value) => new(true, value, new List<Error>());
+    public static new Result<T> Failure(params Error[] errors) => new(false, default, errors);
+    public static new Result<T> Failure(IEnumerable<Error> errors) => new(false, default, errors);
 }
