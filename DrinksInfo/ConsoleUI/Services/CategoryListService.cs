@@ -80,7 +80,7 @@ public class CategoryListService
         {
             var drinkSelection = _drinkListSelection.Render(categoryName, drinks);
 
-            exitCode = await _drinkDetailService.ManageDrinkDetailsAsync(drinkSelection);
+            exitCode = await _drinkDetailService.ManageDrinkDetailsAsync(DrinkDetailEntryMode.Category, drinkSelection);
 
             if (exitCode == ExitCode.CategorySelection || exitCode == ExitCode.MainMenu)
                 returnToCategoryMenu = true;

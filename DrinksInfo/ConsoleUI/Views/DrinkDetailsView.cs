@@ -5,13 +5,13 @@ namespace DrinksInfo.ConsoleUI.Views;
 
 public class DrinkDetailsView
 {
-    public void Render(DrinkDetailResponse drink)
+    public void Render(DrinkDetailResponse drink, bool isFavorite)
     {
         AnsiConsole.MarkupInterpolated($"[bold blue]Drink:[/] [bold underline green]{drink.Name}[/]");
 
         AnsiConsole.WriteLine();
         AnsiConsole.WriteLine();
-        var descriptionTable = GenerateDescriptionTable(drink);
+        var descriptionTable = GenerateDescriptionTable(drink, isFavorite);
         AnsiConsole.Write(descriptionTable);
 
         AnsiConsole.WriteLine();
@@ -26,8 +26,9 @@ public class DrinkDetailsView
         GenerateIngredientsList(ingredientMeasurements);
     }
 
-    private Table GenerateDescriptionTable(DrinkDetailResponse drink)
+    private Table GenerateDescriptionTable(DrinkDetailResponse drink, bool isFavorite)
     {
+        string spacing = "      ";
         var table = new Table()
                 .HideHeaders()
                 .NoBorder();
@@ -38,8 +39,9 @@ public class DrinkDetailsView
         table.AddColumn("Key");
         table.AddColumn("Value");
 
-        table.AddRow("[blue]Id:[/]", $"{drink.Id}", "      ", "[blue]Category:[/]", $"{drink.Category}");
-        table.AddRow("[blue]Glass:[/]", $"{drink.Glass}", "      ", "[blue]Alcoholic:[/]", $"{drink.IsAlcoholic}");
+        table.AddRow("[blue]Id:[/]", $"{drink.Id}", $"{spacing}", "[blue]Category:[/]", $"{drink.Category}");
+        table.AddRow("[blue]Glass:[/]", $"{drink.Glass}", $"{spacing}", "[blue]Alcoholic:[/]", $"{drink.IsAlcoholic}");
+        table.AddRow("[blue]Favorite[/]", $"{isFavorite}", $"{spacing}", "");
 
         return table;
     }

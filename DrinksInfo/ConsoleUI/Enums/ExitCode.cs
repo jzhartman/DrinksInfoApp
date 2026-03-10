@@ -5,5 +5,6 @@ public enum ExitCode
     None,
     MainMenu,
     CategorySelection,
-    DrinkSelection
+    DrinkSelection,
+    FavoriteList
 }

@@ -3,6 +3,7 @@ using DrinksInfo.Application.DrinkInfoApi.GetDrinkImage;
 using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
 using DrinksInfo.Application.Favorites.AddFavoriteDrink;
 using DrinksInfo.Application.Favorites.DeleteFavoriteDrink;
+using DrinksInfo.Application.Favorites.ExistsById;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Input;
@@ -17,6 +18,7 @@ public class DrinkDetailService
     private readonly GetDrinkImageHandler _getDrinkImageHandler;
     private readonly AddFavoriteDrinkHandler _addFavoriteHandler;
     private readonly DeleteFavoriteDrinkByIdHandler _deleteFavoriteHandler;
+    private readonly FavoriteExistsByIdHandler _favoriteExists;
 
     private readonly DrinkDetailsView _drinkDetails;
     private readonly DrinkImageView _drinkImage;
@@ -26,24 +28,27 @@ public class DrinkDetailService
 
     public DrinkDetailService(GetDrinkDetailsByIdHandler getDrinkDetailsHandler, GetDrinkImageHandler getDrinkImageHandler,
                                 AddFavoriteDrinkHandler addFavoriteHandler, DeleteFavoriteDrinkByIdHandler deleteFavoriteHandler,
-                                DrinkDetailsView drinkDetails, DrinkImageView drinkImage, ConsoleOutput output, UserInput input)
+                                DrinkDetailsView drinkDetails, FavoriteExistsByIdHandler favoriteExists,
+                                DrinkImageView drinkImage, ConsoleOutput output, UserInput input)
     {
         _getDrinkDetailsHandler = getDrinkDetailsHandler;
         _getDrinkImageHandler = getDrinkImageHandler;
         _addFavoriteHandler = addFavoriteHandler;
         _deleteFavoriteHandler = deleteFavoriteHandler;
         _drinkDetails = drinkDetails;
+        _favoriteExists = favoriteExists;
         _drinkImage = drinkImage;
         _output = output;
         _input = input;
     }
 
-    public async Task<ExitCode> ManageDrinkDetailsAsync(DrinkSummaryResponse drinkSelection)
+    public async Task<ExitCode> ManageDrinkDetailsAsync(DrinkDetailEntryMode entryMode, DrinkSummaryResponse drinkSelection)
     {
         var exitCode = ExitCode.None;
-        bool returnToDrinkSelection = false;
+        bool returnToPreviousMenu = false;
+        bool isFavorite = (await _favoriteExists.HandleAsync(drinkSelection.Id)).IsSuccess;
 
-        while (returnToDrinkSelection == false)
+        while (returnToPreviousMenu == false)
         {
             Console.Clear();
             var drinkDetailResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching {drinkSelection.Name} details...", () =>
@@ -51,38 +56,19 @@ public class DrinkDetailService
 
             if (drinkDetailResult.IsSuccess && drinkDetailResult.Value != null)
             {
-                _drinkDetails.Render(drinkDetailResult.Value);
+                _drinkDetails.Render(drinkDetailResult.Value, isFavorite);
 
                 Console.WriteLine();
                 Console.WriteLine();
-                _output.RenderDrinkDetailKeyOptions();
+
+                _output.RenderDrinkDetailKeyOptions(entryMode, isFavorite);
 
                 var keyInfo = Console.ReadKey(true);
-                switch (keyInfo.Key)
-                {
-                    case ConsoleKey.V:
-                        await ManageViewImage(drinkDetailResult.Value.ImageUrl);
-                        break;
-                    case ConsoleKey.F:
-                        await ManageAddFavorite(drinkDetailResult.Value);
-                        break;
-                    case ConsoleKey.X:
-                        await ManageDeleteFavorite(drinkDetailResult.Value);
-                        break;
-                    case ConsoleKey.D:
-                        exitCode = ExitCode.DrinkSelection;
-                        break;
-                    case ConsoleKey.C:
-                        exitCode = ExitCode.CategorySelection;
-                        break;
-                    case ConsoleKey.M:
-                        exitCode = ExitCode.MainMenu;
-                        break;
-                    default:
-                        _output.InputErrorMessage();
-                        exitCode = ExitCode.None;
-                        break;
-                }
+
+                if (entryMode == DrinkDetailEntryMode.Category)
+                    (exitCode, isFavorite) = await ManageKeyPressMenuFromCategory(keyInfo, drinkDetailResult.Value, isFavorite);
+                else
+                    (exitCode, isFavorite) = await ManageKeyPressMenuFromFavorite(keyInfo, drinkDetailResult.Value, isFavorite);
             }
             else
             {
@@ -90,15 +76,86 @@ public class DrinkDetailService
                 _input.PressAnyKeyToContinue();
             }
 
-            if (exitCode == ExitCode.DrinkSelection || exitCode == ExitCode.CategorySelection || exitCode == ExitCode.MainMenu)
-                returnToDrinkSelection = true;
+            if (exitCode == ExitCode.DrinkSelection || exitCode == ExitCode.CategorySelection ||
+                exitCode == ExitCode.MainMenu || exitCode == ExitCode.FavoriteList)
+                returnToPreviousMenu = true;
             else
-                returnToDrinkSelection = false;
+                returnToPreviousMenu = false;
         }
 
         return exitCode;
     }
 
+    private async Task<(ExitCode, bool)> ManageKeyPressMenuFromCategory(ConsoleKeyInfo keyInfo, DrinkDetailResponse drinkDetailResponse,
+                                                                    bool isFavorite)
+    {
+        ExitCode exitCode = ExitCode.None;
+        switch (keyInfo.Key)
+        {
+            case ConsoleKey.V:
+                await ManageViewImage(drinkDetailResponse.ImageUrl);
+                break;
+            case ConsoleKey.F:
+                if (isFavorite == false)
+                {
+                    await ManageAddFavorite(drinkDetailResponse);
+                    isFavorite = true;
+                }
+                break;
+            case ConsoleKey.X:
+                if (isFavorite)
+                {
+                    await ManageDeleteFavorite(drinkDetailResponse);
+                    isFavorite = false;
+                }
+                break;
+            case ConsoleKey.D:
+                exitCode = ExitCode.DrinkSelection;
+                break;
+            case ConsoleKey.C:
+                exitCode = ExitCode.CategorySelection;
+                break;
+            case ConsoleKey.M:
+                exitCode = ExitCode.MainMenu;
+                break;
+            default:
+                _output.InputErrorMessage();
+                exitCode = ExitCode.None;
+                break;
+        }
+
+        return (exitCode, isFavorite);
+    }
+    private async Task<(ExitCode, bool)> ManageKeyPressMenuFromFavorite(ConsoleKeyInfo keyInfo, DrinkDetailResponse drinkDetailResponse,
+                                                                    bool isFavorite)
+    {
+        ExitCode exitCode = ExitCode.None;
+        switch (keyInfo.Key)
+        {
+            case ConsoleKey.V:
+                await ManageViewImage(drinkDetailResponse.ImageUrl);
+                break;
+            case ConsoleKey.X:
+                if (isFavorite)
+                {
+                    await ManageDeleteFavorite(drinkDetailResponse);
+                    isFavorite = false;
+                }
+                break;
+            case ConsoleKey.L:
+                exitCode = ExitCode.FavoriteList;
+                break;
+            case ConsoleKey.M:
+                exitCode = ExitCode.MainMenu;
+                break;
+            default:
+                _output.InputErrorMessage();
+                exitCode = ExitCode.None;
+                break;
+        }
+
+        return (exitCode, isFavorite);
+    }
     private async Task ManageViewImage(string url)
     {
         Console.Clear();
@@ -116,7 +173,6 @@ public class DrinkDetailService
             _input.PressAnyKeyToContinue();
         }
     }
-
     private async Task ManageAddFavorite(DrinkDetailResponse drinkDetails)
     {
         var addResult = await _addFavoriteHandler.HandleAsync(new(drinkDetails.Id, drinkDetails.Name, drinkDetails.Category));

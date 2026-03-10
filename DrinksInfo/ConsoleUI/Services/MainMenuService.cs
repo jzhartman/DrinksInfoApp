@@ -1,17 +1,19 @@
 ﻿using DrinksInfo.ConsoleUI.Enums;
-using DrinksInfo.ConsoleUI.Helpers;
+using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
-using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
 public class MainMenuService
 {
+    private readonly ConsoleOutput _output;
     private readonly MainMenuView _mainMenu;
     private readonly CategoryListService _categoryList;
     private readonly FavoriteDrinkServices _favoriteDrinkServices;
-    public MainMenuService(MainMenuView mainMenu, CategoryListService categoryList, FavoriteDrinkServices favoriteDrinkServices)
+    public MainMenuService(ConsoleOutput output, MainMenuView mainMenu, CategoryListService categoryList,
+                        FavoriteDrinkServices favoriteDrinkServices)
     {
+        _output = output;
         _mainMenu = mainMenu;
         _categoryList = categoryList;
         _favoriteDrinkServices = favoriteDrinkServices;
@@ -39,13 +41,6 @@ public class MainMenuService
                     break;
             }
         }
-
-        AnsiConsole.Status()
-            .Spinner(new CheersSpinnerHelper())
-            .Start("Cheers!", ctx =>
-            {
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey();
-            });
+        _output.ExitMessage();
     }
 }

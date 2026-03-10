@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddTransient<DrinkDetailsView>();
         services.AddTransient<DrinkImageView>();
         services.AddTransient<MainMenuView>();
+        services.AddTransient<FavoriteDrinkListView>();
 
         services.AddTransient<ConsoleOutput>();
         services.AddTransient<UserInput>();

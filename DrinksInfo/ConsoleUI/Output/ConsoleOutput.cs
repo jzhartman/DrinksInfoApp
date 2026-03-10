@@ -1,11 +1,13 @@
-﻿using DrinksInfo.Domain.Validation;
+﻿using DrinksInfo.ConsoleUI.Enums;
+using DrinksInfo.ConsoleUI.Helpers;
+using DrinksInfo.Domain.Validation;
 using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Output;
 
 public class ConsoleOutput
 {
-    public void RenderDrinkDetailKeyOptions()
+    public void RenderDrinkDetailKeyOptions(DrinkDetailEntryMode entryMode, bool isFavorite)
     {
         var table = new Table()
                         .RoundedBorder()
@@ -16,10 +18,19 @@ public class ConsoleOutput
         table.AddColumn("Operation");
 
         table.AddRow("V", "View Drink Image");
-        table.AddRow("F", "Add Drink to Favorites");
-        table.AddRow("X", "Delete Drink from Favorites");
-        table.AddRow("D", "Return to Drink Selection");
-        table.AddRow("C", "Return to Category Selection");
+        if (isFavorite == false)
+            table.AddRow("F", "Add Drink to Favorites");
+        if (isFavorite)
+            table.AddRow("X", "Delete Drink from Favorites");
+        if (entryMode == DrinkDetailEntryMode.Category)
+        {
+            table.AddRow("D", "Return to Drink Selection");
+            table.AddRow("C", "Return to Category Selection");
+        }
+        if (entryMode == DrinkDetailEntryMode.Favorite)
+        {
+            table.AddRow("L", "Return to Favorites List");
+        }
         table.AddRow("M", "Return to Main Menu");
 
         AnsiConsole.Write(table);
@@ -44,5 +55,16 @@ public class ConsoleOutput
     public void PrintDeleteFavoriteSuccessMessage(string name)
     {
         AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Deleted {name} from favorites list!");
+    }
+
+    public void ExitMessage()
+    {
+        AnsiConsole.Status()
+            .Spinner(new CheersSpinnerHelper())
+            .Start("Cheers!", ctx =>
+            {
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+            });
     }
 }

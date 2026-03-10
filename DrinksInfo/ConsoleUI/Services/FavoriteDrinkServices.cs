@@ -1,39 +1,53 @@
 ﻿using DrinksInfo.Application.Favorites.GetAllFavoriteDrinks;
-using DrinksInfo.Application.Interfaces;
+using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
+using DrinksInfo.ConsoleUI.Input;
+using DrinksInfo.ConsoleUI.Output;
+using DrinksInfo.ConsoleUI.Views;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
 public class FavoriteDrinkServices
 {
-    private readonly IFavoriteDrinkRepository _favoriteDrinkRepo;
-    private readonly IDrinkRepository _drinkRepo;
-
     private readonly GetAllFavoriteDrinksHandler _getAllFavoriteDrinksHandler;
+    private readonly ConsoleOutput _output;
+    private readonly UserInput _input;
+    private readonly FavoriteDrinkListView _favoriteDrinkList;
+    private readonly DrinkDetailService _drinkDetailService;
 
-    public FavoriteDrinkServices(IFavoriteDrinkRepository favoriteDrinkRepo, IDrinkRepository drinkRepo,
-                                GetAllFavoriteDrinksHandler getAllFavoriteDrinksHandler)
+    public FavoriteDrinkServices(GetAllFavoriteDrinksHandler getAllFavoriteDrinksHandler, ConsoleOutput output, UserInput input,
+                                FavoriteDrinkListView favoriteDrinkList, DrinkDetailService drinkDetailService)
     {
-        _favoriteDrinkRepo = favoriteDrinkRepo;
-        _drinkRepo = drinkRepo;
         _getAllFavoriteDrinksHandler = getAllFavoriteDrinksHandler;
+        _output = output;
+        _input = input;
+        _favoriteDrinkList = favoriteDrinkList;
+        _drinkDetailService = drinkDetailService;
     }
 
     public async Task RunAsync()
     {
-        Console.Clear();
-        var favoriteListResult = await ConsoleStatusHelper.ShowStatusAsync("Fetching favorite drink list...", () =>
-                                                _getAllFavoriteDrinksHandler.HandleAsync());
+        var exitCode = ExitCode.None;
 
-        if (favoriteListResult.IsSuccess && favoriteListResult.Value != null)
+        while (exitCode != ExitCode.MainMenu)
         {
-            // Print Favorite List as Selection Prompt
-            // Get user selection
-            // 
-        }
-        else
-        {
-            //Print Errors
+            Console.Clear();
+            var favoriteListResult = await ConsoleStatusHelper.ShowStatusAsync("Fetching favorite drink list...", () =>
+                                        _getAllFavoriteDrinksHandler.HandleAsync());
+
+            if (favoriteListResult.IsSuccess && favoriteListResult.Value != null)
+            {
+                var drinkSelection = _favoriteDrinkList.Render(favoriteListResult.Value);
+
+                exitCode = await _drinkDetailService.ManageDrinkDetailsAsync(DrinkDetailEntryMode.Favorite,
+                                                new(drinkSelection.DrinkId, drinkSelection.Name, "", drinkSelection.Category));
+            }
+            else
+            {
+                _output.OutputErrorMessage(favoriteListResult.Errors);
+                _input.PressAnyKeyToContinue();
+                exitCode = ExitCode.MainMenu;
+            }
         }
     }
 }
