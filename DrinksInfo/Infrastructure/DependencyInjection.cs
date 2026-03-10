@@ -19,6 +19,7 @@ public static class DependencyInjection
 
         services.AddTransient<IDrinkRepository, DrinkRepository>();
         services.AddTransient<IFavoriteDrinkRepository, FavoriteDrinkRepository>();
+        services.AddTransient<IDrinkViewCountRepository, DrinkViewCountRepository>();
 
         return services;
     }
