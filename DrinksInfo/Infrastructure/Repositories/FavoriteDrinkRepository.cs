@@ -9,20 +9,20 @@ namespace DrinksInfo.Infrastructure.Repositories;
 
 public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 {
-    private readonly ISqliteConnectionFactory _connectionFactory;
-    public FavoriteDrinkRepository(ISqliteConnectionFactory connectionFactory)
+    private readonly ISqliteConnectionFactory _connection;
+    public FavoriteDrinkRepository(ISqliteConnectionFactory connection)
     {
-        _connectionFactory = connectionFactory;
+        _connection = connection;
     }
     public async Task<Result> ExistsByIdAsync(int id)
     {
-        string sql = $"Select count(1) from FavoriteDrink where DrinkId = {id}";
+        string sql = $"Select count(1) from FavoriteDrink where DrinkId = @Id";
 
         try
         {
-            using var connection = _connectionFactory.CreateConnection();
+            using var connection = _connection.CreateConnection();
 
-            var response = await connection.ExecuteScalarAsync<int>(sql);
+            var response = await connection.ExecuteScalarAsync<int>(sql, new { Id = id });
 
             if (response > 0)
                 return Result.Success();
@@ -40,7 +40,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 
         try
         {
-            using var connection = _connectionFactory.CreateConnection();
+            using var connection = _connection.CreateConnection();
 
             var response = await connection.QueryAsync<FavoriteDrink>(sql);
 
@@ -61,7 +61,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 
         try
         {
-            using var connection = _connectionFactory.CreateConnection();
+            using var connection = _connection.CreateConnection();
             connection.Execute(sql, drink);
 
             var result = await ExistsByIdAsync((int)drink.DrinkId);
@@ -83,7 +83,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 
         try
         {
-            using var connection = _connectionFactory.CreateConnection();
+            using var connection = _connection.CreateConnection();
             connection.Execute(sql, new { Id = id });
 
             var result = await ExistsByIdAsync(id);
