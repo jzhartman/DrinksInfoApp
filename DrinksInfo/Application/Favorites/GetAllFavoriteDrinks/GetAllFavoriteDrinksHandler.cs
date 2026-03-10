@@ -21,6 +21,8 @@ public class GetAllFavoriteDrinksHandler
             return Result<List<FavoriteDrinkResponse>>.Failure(result.Errors);
         if (result?.Value == null)
             return Result<List<FavoriteDrinkResponse>>.Failure(Errors.GenericNull);
+        if (result.Value.Count == 0)
+            return Result<List<FavoriteDrinkResponse>>.Failure(Errors.FavoriteListEmpty);
         else
             return Result<List<FavoriteDrinkResponse>>.Success(await MapToResponseAsync(result.Value));
     }
@@ -31,7 +33,7 @@ public class GetAllFavoriteDrinksHandler
 
         foreach (var drink in favorites)
         {
-            output.Add(new FavoriteDrinkResponse(drink.Id, drink.DrinkId, drink.Name, drink.Category));
+            output.Add(new FavoriteDrinkResponse((int)drink.Id, (int)drink.DrinkId, drink.Name, drink.Category));
         }
         return output;
     }
