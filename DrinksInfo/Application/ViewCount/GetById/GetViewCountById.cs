@@ -1,0 +1,26 @@
+﻿using DrinksInfo.Domain.Validation;
+using DrinksInfo.Infrastructure.Repositories;
+
+namespace DrinksInfo.Application.ViewCount.GetById;
+
+public class GetViewCountById
+{
+    private readonly IDrinkViewCountRepository _viewCountRepo;
+
+    public GetViewCountById(IDrinkViewCountRepository viewCountRepo)
+    {
+        _viewCountRepo = viewCountRepo;
+    }
+
+    public async Task<Result<int>> HandleAsync(int id)
+    {
+        var result = await _viewCountRepo.GetCountByIdAsync(id);
+
+        if (result.IsFailure)
+            return Result<int>.Failure(result.Errors);
+        if (result.Value == null)
+            return Result<int>.Success(1);
+
+        return Result<int>.Success((int)result.Value.ViewCount);
+    }
+}
