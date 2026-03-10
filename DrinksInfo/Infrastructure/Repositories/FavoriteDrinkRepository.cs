@@ -64,7 +64,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
             using var connection = _connectionFactory.CreateConnection();
             connection.Execute(sql, drink);
 
-            var result = await ExistsByIdAsync(drink.DrinkId);
+            var result = await ExistsByIdAsync((int)drink.DrinkId);
 
             if (result.IsSuccess)
                 return Result.Success();
@@ -79,12 +79,12 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 
     public async Task<Result> DeleteByIdAsync(int id)
     {
-        string sql = $"delete from FavoriteDrink where DrinkId = {id}";
+        string sql = $"delete from FavoriteDrink where DrinkId = @Id";
 
         try
         {
             using var connection = _connectionFactory.CreateConnection();
-            connection.Execute(sql);
+            connection.Execute(sql, new { Id = id });
 
             var result = await ExistsByIdAsync(id);
 

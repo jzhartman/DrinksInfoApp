@@ -11,6 +11,7 @@ public static class Errors
     public static readonly Error InvalidJson = new("InvalidJson", "The API response contained invalid JSON.");
 
     public static readonly Error EmptyDbResponse = new("EmptyDbResponse", "The database returned no records.");
+    public static readonly Error FavoriteListEmpty = new("FavoriteListEmpty", "There are no favorite drinks save in the list.");
     public static readonly Error NoRecordById = new("NoRecordById", "No record matching that Id exists.");
     public static readonly Error AddFailed = new("AddFailed", "Failed to add new record.");
     public static readonly Error DeleteFailed = new("DeleteFailed", "Failed to delete record.");
