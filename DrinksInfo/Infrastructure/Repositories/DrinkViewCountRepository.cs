@@ -82,16 +82,16 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         }
     }
 
-    public async Task<Result> AddByDrinkId(DrinkViewCount viewCount)
+    public async Task<Result> AddByDrinkIdAsync(int id)
     {
         string sql = "insert into DrinkViewCount (DrinkId, ViewCount) values (@DrinkId, 0)";
 
         try
         {
             using var connection = _connection.CreateConnection();
-            connection.Execute(sql, viewCount);
+            connection.Execute(sql, new { DrinkId = id });
 
-            var result = await ExistsByIdAsync((int)viewCount.DrinkId);
+            var result = await ExistsByIdAsync((int)id);
 
             if (result.IsSuccess)
                 return Result.Success();
