@@ -60,4 +60,48 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
         }
     }
+
+    public async Task<Result> ExistsByIdAsync(int id)
+    {
+        string sql = $"Select count(1) from DrinkViewCount where DrinkId = @Id";
+
+        try
+        {
+            using var connection = _connection.CreateConnection();
+
+            var response = await connection.ExecuteScalarAsync<int>(sql, new { Id = id });
+
+            if (response > 0)
+                return Result.Success();
+            else
+                return Result.Failure(Errors.NoRecordById);
+        }
+        catch (SqliteException ex)
+        {
+            return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+    }
+
+    public async Task<Result> AddByDrinkId(DrinkViewCount viewCount)
+    {
+        string sql = "insert into DrinkViewCount (DrinkId, ViewCount) values (@DrinkId, 0)";
+
+        try
+        {
+            using var connection = _connection.CreateConnection();
+            connection.Execute(sql, viewCount);
+
+            var result = await ExistsByIdAsync((int)viewCount.DrinkId);
+
+            if (result.IsSuccess)
+                return Result.Success();
+            else
+                return Result.Failure(Errors.AddFailed);
+        }
+        catch (SqliteException ex)
+        {
+            return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+    }
+
 }
