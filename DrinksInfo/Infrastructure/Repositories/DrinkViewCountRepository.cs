@@ -23,7 +23,7 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         {
             using var connection = _connection.CreateConnection();
 
-            var response = await connection.ExecuteScalarAsync<DrinkViewCount>(sql, new { Id = id });
+            var response = await connection.QuerySingleOrDefaultAsync<DrinkViewCount>(sql, new { Id = id });
 
             if (response == null)
                 return Result<DrinkViewCount>.Failure(Errors.GenericNull);
@@ -41,19 +41,17 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
     {
         string sql = @$"update DrinkViewCount
                         set ViewCount = ViewCount + 1
-                        where DrinkId = @Id";
+                        where DrinkId = @Id;";
 
         try
         {
             using var connection = _connection.CreateConnection();
+            var changed = await connection.ExecuteAsync(sql, new { Id = id });
 
-            var response = await connection.ExecuteScalarAsync(sql, new { Id = id });
+            if (changed > 0)
+                return Result.Success();
 
-            if (response == null)
-                return Result.Failure(Errors.GenericNull);
-
-            return Result.Success();
-
+            return Result.Failure(Errors.UpdateFailed);
         }
         catch (SqliteException ex)
         {
@@ -84,16 +82,14 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
 
     public async Task<Result> AddByDrinkIdAsync(int id)
     {
-        string sql = "insert into DrinkViewCount (DrinkId, ViewCount) values (@DrinkId, 0)";
+        string sql = "insert into DrinkViewCount (DrinkId, ViewCount) values (@DrinkId, 1)";
 
         try
         {
             using var connection = _connection.CreateConnection();
-            connection.Execute(sql, new { DrinkId = id });
+            var changed = await connection.ExecuteAsync(sql, new { DrinkId = id });
 
-            var result = await ExistsByIdAsync((int)id);
-
-            if (result.IsSuccess)
+            if (changed > 0)
                 return Result.Success();
             else
                 return Result.Failure(Errors.AddFailed);
