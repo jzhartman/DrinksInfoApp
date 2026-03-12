@@ -3,10 +3,10 @@ using DrinksInfo.Infrastructure.Repositories;
 
 namespace DrinksInfo.Application.ViewCount.AddByDrinkId;
 
-public class AddByDrinkIdHandler
+public class AddViewCountByDrinkIdHandler
 {
     private readonly IDrinkViewCountRepository _viewCountRepo;
-    public AddByDrinkIdHandler(IDrinkViewCountRepository viewCountRepo)
+    public AddViewCountByDrinkIdHandler(IDrinkViewCountRepository viewCountRepo)
     {
         _viewCountRepo = viewCountRepo;
     }
@@ -18,9 +18,6 @@ public class AddByDrinkIdHandler
         if (existsResult.IsSuccess)
             return Result.Failure(Errors.AddFailed);
 
-        var addResult = await _viewCountRepo.AddByDrinkIdAsync(id);
-
-
-
+        return await _viewCountRepo.AddByDrinkIdAsync(id);
     }
 }
