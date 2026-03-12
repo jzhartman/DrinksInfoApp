@@ -3,11 +3,11 @@ using DrinksInfo.Infrastructure.Repositories;
 
 namespace DrinksInfo.Application.ViewCount.GetById;
 
-public class GetViewCountById
+public class GetViewCountByIdHandler
 {
     private readonly IDrinkViewCountRepository _viewCountRepo;
 
-    public GetViewCountById(IDrinkViewCountRepository viewCountRepo)
+    public GetViewCountByIdHandler(IDrinkViewCountRepository viewCountRepo)
     {
         _viewCountRepo = viewCountRepo;
     }
