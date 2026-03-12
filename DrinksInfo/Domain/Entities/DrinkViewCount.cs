@@ -2,7 +2,7 @@
 
 public class DrinkViewCount
 {
-    public int Id { get; set; }
-    public int DrinkId { get; set; }
+    public long Id { get; set; }
+    public long DrinkId { get; set; }
     public long ViewCount { get; set; }
 }
