@@ -7,6 +7,10 @@ using DrinksInfo.Application.Favorites.DeleteFavoriteDrink;
 using DrinksInfo.Application.Favorites.ExistsById;
 using DrinksInfo.Application.Favorites.GetAllFavoriteDrinks;
 using DrinksInfo.Application.Interfaces;
+using DrinksInfo.Application.ViewCount.AddByDrinkId;
+using DrinksInfo.Application.ViewCount.ExistsById;
+using DrinksInfo.Application.ViewCount.GetById;
+using DrinksInfo.Application.ViewCount.UpdateById;
 using DrinksInfo.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
@@ -34,6 +38,11 @@ public static class DependencyInjection
         services.AddTransient<AddFavoriteDrinkHandler>();
         services.AddTransient<DeleteFavoriteDrinkByIdHandler>();
         services.AddTransient<FavoriteExistsByIdHandler>();
+
+        services.AddTransient<AddViewCountByDrinkIdHandler>();
+        services.AddTransient<ViewCountExistsByIdHandler>();
+        services.AddTransient<UpdateViewCountByIdHandler>();
+        services.AddTransient<GetViewCountByIdHandler>();
 
         return services;
     }

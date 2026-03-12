@@ -19,6 +19,7 @@ public class DrinkDetailService
     private readonly AddFavoriteDrinkHandler _addFavoriteHandler;
     private readonly DeleteFavoriteDrinkByIdHandler _deleteFavoriteHandler;
     private readonly FavoriteExistsByIdHandler _favoriteExists;
+    private readonly GetViewCountService _viewCountService;
 
     private readonly DrinkDetailsView _drinkDetails;
     private readonly DrinkImageView _drinkImage;
@@ -28,15 +29,17 @@ public class DrinkDetailService
 
     public DrinkDetailService(GetDrinkDetailsByIdHandler getDrinkDetailsHandler, GetDrinkImageHandler getDrinkImageHandler,
                                 AddFavoriteDrinkHandler addFavoriteHandler, DeleteFavoriteDrinkByIdHandler deleteFavoriteHandler,
-                                DrinkDetailsView drinkDetails, FavoriteExistsByIdHandler favoriteExists,
+                                DrinkDetailsView drinkDetails, FavoriteExistsByIdHandler favoriteExists, GetViewCountService viewCountService,
                                 DrinkImageView drinkImage, ConsoleOutput output, UserInput input)
     {
         _getDrinkDetailsHandler = getDrinkDetailsHandler;
         _getDrinkImageHandler = getDrinkImageHandler;
         _addFavoriteHandler = addFavoriteHandler;
         _deleteFavoriteHandler = deleteFavoriteHandler;
+        _viewCountService = viewCountService;
         _drinkDetails = drinkDetails;
         _favoriteExists = favoriteExists;
+
         _drinkImage = drinkImage;
         _output = output;
         _input = input;
@@ -48,6 +51,8 @@ public class DrinkDetailService
         bool returnToPreviousMenu = false;
         bool isFavorite = (await _favoriteExists.HandleAsync(drinkSelection.Id)).IsSuccess;
 
+        var viewCount = await _viewCountService.RunAsync(drinkSelection.Id);
+
         while (returnToPreviousMenu == false)
         {
             Console.Clear();
@@ -56,7 +61,7 @@ public class DrinkDetailService
 
             if (drinkDetailResult.IsSuccess && drinkDetailResult.Value != null)
             {
-                _drinkDetails.Render(drinkDetailResult.Value, isFavorite);
+                _drinkDetails.Render(drinkDetailResult.Value, isFavorite, viewCount);
 
                 Console.WriteLine();
                 Console.WriteLine();

@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddTransient<CategoryListService>();
         services.AddTransient<DrinkDetailService>();
         services.AddTransient<FavoriteDrinkServices>();
+        services.AddTransient<GetViewCountService>();
 
         services.AddTransient<CategoryListSelectionView>();
         services.AddTransient<DrinkListSelectionView>();
