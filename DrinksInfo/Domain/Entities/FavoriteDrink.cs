@@ -7,7 +7,7 @@ public class FavoriteDrink
     public string Name { get; set; }
     public string Category { get; set; }
 
-    public FavoriteDrink(long id, long drinkId, string category, string name)
+    public FavoriteDrink(long id, long drinkId, string name, string category)
     {
         Id = id;
         DrinkId = drinkId;
