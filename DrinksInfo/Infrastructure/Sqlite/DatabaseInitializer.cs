@@ -31,8 +31,8 @@ public class DatabaseInitializer : IDatabaseInitializer
     {
         string parameters = $@" Id integer primary key not null,
                                 DrinkId integer not null,
-                                Category text not null,
-                                Name text not null";
+                                Name text not null,
+                                Category text not null";
         using var connection = _connectionFactory.CreateConnection();
         var command = connection.CreateCommand();
         command.CommandText = $"create table if not exists {FavoriteDrinkTableName}({parameters})";
