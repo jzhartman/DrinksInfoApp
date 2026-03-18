@@ -15,7 +15,7 @@ public class UpdateViewCountByIdHandler
     {
         var result = await _viewCountRepo.UpdateCountByIdAsync(id);
 
-        if (result == null)
+        if (result is null)
             return Result.Failure(Errors.UpdateFailed);
 
         return result;

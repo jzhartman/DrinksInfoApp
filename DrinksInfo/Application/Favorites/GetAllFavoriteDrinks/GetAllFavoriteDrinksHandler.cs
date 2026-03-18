@@ -17,10 +17,10 @@ public class GetAllFavoriteDrinksHandler
     {
         var result = await _favoriteRepo.GetAllAsync();
 
+        if (result?.Value is null)
+            return Result<List<FavoriteDrinkResponse>>.Failure(Errors.GenericNull);
         if (result.IsFailure)
             return Result<List<FavoriteDrinkResponse>>.Failure(result.Errors);
-        if (result?.Value == null)
-            return Result<List<FavoriteDrinkResponse>>.Failure(Errors.GenericNull);
         if (result.Value.Count == 0)
             return Result<List<FavoriteDrinkResponse>>.Failure(Errors.FavoriteListEmpty);
         else

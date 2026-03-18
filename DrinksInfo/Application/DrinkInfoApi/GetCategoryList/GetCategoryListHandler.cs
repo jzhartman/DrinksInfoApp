@@ -17,10 +17,10 @@ public class GetCategoryListHandler
     {
         var result = await _drinkRepo.GetCategoryListAsync();
 
-        if (result.IsFailure)
-            return Result<List<CategoryResponse>>.Failure(result.Errors);
         if (result?.Value == null)
             return Result<List<CategoryResponse>>.Failure(Errors.GenericNull);
+        if (result.IsFailure)
+            return Result<List<CategoryResponse>>.Failure(result.Errors);
         else
             return Result<List<CategoryResponse>>.Success(await MapToResponseAsync(result.Value));
     }

@@ -16,10 +16,10 @@ public class GetDrinkImageHandler
     {
         var response = await _drinkRepo.GetDrinkImageAsync(url);
 
-        if (response.IsFailure)
-            return Result<DrinkImageResponse>.Failure(response.Errors);
         if (response is null)
             return Result<DrinkImageResponse>.Failure(Errors.GenericNull);
+        if (response.IsFailure)
+            return Result<DrinkImageResponse>.Failure(response.Errors);
         else
             return Result<DrinkImageResponse>.Success(response.Value);
     }

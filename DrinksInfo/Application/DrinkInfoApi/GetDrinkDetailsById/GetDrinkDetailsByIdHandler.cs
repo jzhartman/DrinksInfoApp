@@ -15,10 +15,10 @@ public class GetDrinkDetailsByIdHandler
     {
         var result = await _drinkRepo.GetDrinkDeailsByIdAsync(id);
 
-        if (result.IsFailure)
-            return Result<DrinkDetailResponse>.Failure(result.Errors);
         if (result?.Value == null)
             return Result<DrinkDetailResponse>.Failure(Errors.GenericNull);
+        if (result.IsFailure)
+            return Result<DrinkDetailResponse>.Failure(result.Errors);
         else
         {
             var drinkDetailResponse = new DrinkDetailResponse(

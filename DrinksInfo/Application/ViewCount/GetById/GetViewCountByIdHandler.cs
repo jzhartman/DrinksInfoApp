@@ -16,10 +16,10 @@ public class GetViewCountByIdHandler
     {
         var result = await _viewCountRepo.GetCountByIdAsync(id);
 
+        if (result.Value is null)
+            return Result<int>.Success(1);
         if (result.IsFailure)
             return Result<int>.Failure(result.Errors);
-        if (result.Value == null)
-            return Result<int>.Success(1);
 
         return Result<int>.Success((int)result.Value.ViewCount);
     }
