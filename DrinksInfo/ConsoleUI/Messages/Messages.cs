@@ -5,7 +5,7 @@ using Spectre.Console;
 
 namespace DrinksInfo.ConsoleUI.Output;
 
-public class ConsoleOutput
+public class Messages
 {
     public void RenderDrinkDetailKeyOptions(DrinkDetailEntryMode entryMode, bool isFavorite)
     {
@@ -47,14 +47,17 @@ public class ConsoleOutput
         {
             AnsiConsole.MarkupLine($"[red]ERROR:[/] {error.Description}");
         }
+        PressAnyKeyToContinue();
     }
     public void PrintAddFavoriteSuccessMessage(string name)
     {
         AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Added {name} to favorites list!");
+        PressAnyKeyToContinue();
     }
     public void PrintDeleteFavoriteSuccessMessage(string name)
     {
         AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Deleted {name} from favorites list!");
+        PressAnyKeyToContinue();
     }
 
     public void ExitMessage()
@@ -66,5 +69,11 @@ public class ConsoleOutput
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             });
+    }
+
+    public void PressAnyKeyToContinue()
+    {
+        Console.Write("Press any key to continue...");
+        Console.ReadLine();
     }
 }

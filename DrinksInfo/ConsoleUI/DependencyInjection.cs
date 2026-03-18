@@ -1,5 +1,4 @@
-﻿using DrinksInfo.ConsoleUI.Input;
-using DrinksInfo.ConsoleUI.Output;
+﻿using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Services;
 using DrinksInfo.ConsoleUI.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +22,7 @@ public static class DependencyInjection
         services.AddTransient<MainMenuView>();
         services.AddTransient<FavoriteDrinkListView>();
 
-        services.AddTransient<ConsoleOutput>();
-        services.AddTransient<UserInput>();
+        services.AddTransient<Messages>();
 
         return services;
     }

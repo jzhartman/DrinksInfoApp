@@ -2,7 +2,6 @@
 using DrinksInfo.Application.DrinkInfoApi.GetDrinksSummaryByCategoryName;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
-using DrinksInfo.ConsoleUI.Input;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
 using DrinksInfo.Domain.Validation;
@@ -16,20 +15,18 @@ public class CategoryListService
     private readonly DrinkDetailService _drinkDetailService;
     private readonly GetCategoryListHandler _getCategoryListHandler;
     private readonly GetDrinksSummaryByCategoryNameHandler _getDrinksHandler;
-    private readonly ConsoleOutput _output;
-    private readonly UserInput _input;
+    private readonly Messages _messages;
 
     public CategoryListService(CategoryListSelectionView categorySelection, DrinkListSelectionView drinkListSelection,
                                 GetCategoryListHandler getCategoryListHandler, GetDrinksSummaryByCategoryNameHandler getDrinksHandler,
-                                DrinkDetailService drinkDetailService, ConsoleOutput output, UserInput input)
+                                DrinkDetailService drinkDetailService, Messages messages)
     {
         _categorySelection = categorySelection;
         _drinkListSelection = drinkListSelection;
         _getCategoryListHandler = getCategoryListHandler;
         _getDrinksHandler = getDrinksHandler;
         _drinkDetailService = drinkDetailService;
-        _output = output;
-        _input = input;
+        _messages = messages;
     }
 
     public async Task RunAsync()
@@ -41,7 +38,7 @@ public class CategoryListService
         if (categoryListResult.IsSuccess && categoryListResult.Value != null)
             await ManageCategorySelection(categoryListResult.Value);
         else
-            ManageErrorPrinting(categoryListResult.Errors);
+            _messages.OutputErrorMessage(categoryListResult.Errors);
     }
 
     private async Task ManageCategorySelection(List<CategoryResponse> category)
@@ -59,10 +56,16 @@ public class CategoryListService
             var drinksResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching drinks in {categorySelection}...", () =>
                                             _getDrinksHandler.HandleAsync(category[selectionIndex].Name));
 
-            if (drinksResult.IsSuccess && drinksResult.Value != null)
+            if (drinksResult?.Value is null)
+            {
+                _messages.OutputErrorMessage([Errors.GenericNull]);
+                continue;
+            }
+
+            if (drinksResult.IsSuccess)
                 exitCode = await ManageDrinkDetails(category[selectionIndex].Name, drinksResult.Value);
             else
-                ManageErrorPrinting(drinksResult.Errors);
+                _messages.OutputErrorMessage(drinksResult.Errors);
 
             if (exitCode == ExitCode.MainMenu)
                 returnToMainMenu = true;
@@ -88,11 +91,5 @@ public class CategoryListService
                 returnToCategoryMenu = false;
         }
         return exitCode;
-    }
-
-    private void ManageErrorPrinting(IEnumerable<Error> errors)
-    {
-        _output.OutputErrorMessage(errors);
-        _input.PressAnyKeyToContinue();
     }
 }

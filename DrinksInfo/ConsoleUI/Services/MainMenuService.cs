@@ -6,14 +6,14 @@ namespace DrinksInfo.ConsoleUI.Services;
 
 public class MainMenuService
 {
-    private readonly ConsoleOutput _output;
+    private readonly Messages _messages;
     private readonly MainMenuView _mainMenu;
     private readonly CategoryListService _categoryList;
     private readonly FavoriteDrinkServices _favoriteDrinkServices;
-    public MainMenuService(ConsoleOutput output, MainMenuView mainMenu, CategoryListService categoryList,
+    public MainMenuService(Messages messages, MainMenuView mainMenu, CategoryListService categoryList,
                         FavoriteDrinkServices favoriteDrinkServices)
     {
-        _output = output;
+        _messages = messages;
         _mainMenu = mainMenu;
         _categoryList = categoryList;
         _favoriteDrinkServices = favoriteDrinkServices;
@@ -41,6 +41,6 @@ public class MainMenuService
                     break;
             }
         }
-        _output.ExitMessage();
+        _messages.ExitMessage();
     }
 }

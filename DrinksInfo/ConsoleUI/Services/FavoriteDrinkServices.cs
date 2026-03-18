@@ -1,7 +1,6 @@
 ﻿using DrinksInfo.Application.Favorites.GetAllFavoriteDrinks;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
-using DrinksInfo.ConsoleUI.Input;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
 
@@ -10,17 +9,15 @@ namespace DrinksInfo.ConsoleUI.Services;
 public class FavoriteDrinkServices
 {
     private readonly GetAllFavoriteDrinksHandler _getAllFavoriteDrinksHandler;
-    private readonly ConsoleOutput _output;
-    private readonly UserInput _input;
+    private readonly Messages _messages;
     private readonly FavoriteDrinkListView _favoriteDrinkList;
     private readonly DrinkDetailService _drinkDetailService;
 
-    public FavoriteDrinkServices(GetAllFavoriteDrinksHandler getAllFavoriteDrinksHandler, ConsoleOutput output, UserInput input,
+    public FavoriteDrinkServices(GetAllFavoriteDrinksHandler getAllFavoriteDrinksHandler, Messages messages,
                                 FavoriteDrinkListView favoriteDrinkList, DrinkDetailService drinkDetailService)
     {
         _getAllFavoriteDrinksHandler = getAllFavoriteDrinksHandler;
-        _output = output;
-        _input = input;
+        _messages = messages;
         _favoriteDrinkList = favoriteDrinkList;
         _drinkDetailService = drinkDetailService;
     }
@@ -44,8 +41,7 @@ public class FavoriteDrinkServices
             }
             else
             {
-                _output.OutputErrorMessage(favoriteListResult.Errors);
-                _input.PressAnyKeyToContinue();
+                _messages.OutputErrorMessage(favoriteListResult.Errors);
                 exitCode = ExitCode.MainMenu;
             }
         }

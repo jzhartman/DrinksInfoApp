@@ -6,9 +6,9 @@ using DrinksInfo.Application.Favorites.DeleteFavoriteDrink;
 using DrinksInfo.Application.Favorites.ExistsById;
 using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
-using DrinksInfo.ConsoleUI.Input;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
+using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
@@ -23,14 +23,13 @@ public class DrinkDetailService
 
     private readonly DrinkDetailsView _drinkDetails;
     private readonly DrinkImageView _drinkImage;
-    private readonly ConsoleOutput _output;
-    private readonly UserInput _input;
+    private readonly Messages _output;
 
 
     public DrinkDetailService(GetDrinkDetailsByIdHandler getDrinkDetailsHandler, GetDrinkImageHandler getDrinkImageHandler,
                                 AddFavoriteDrinkHandler addFavoriteHandler, DeleteFavoriteDrinkByIdHandler deleteFavoriteHandler,
                                 DrinkDetailsView drinkDetails, FavoriteExistsByIdHandler favoriteExists, GetViewCountService viewCountService,
-                                DrinkImageView drinkImage, ConsoleOutput output, UserInput input)
+                                DrinkImageView drinkImage, Messages output)
     {
         _getDrinkDetailsHandler = getDrinkDetailsHandler;
         _getDrinkImageHandler = getDrinkImageHandler;
@@ -42,7 +41,6 @@ public class DrinkDetailService
 
         _drinkImage = drinkImage;
         _output = output;
-        _input = input;
     }
 
     public async Task<ExitCode> ManageDrinkDetailsAsync(DrinkDetailEntryMode entryMode, DrinkSummaryResponse drinkSelection)
@@ -59,7 +57,13 @@ public class DrinkDetailService
             var drinkDetailResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching {drinkSelection.Name} details...", () =>
                                             _getDrinkDetailsHandler.HandleAsync(drinkSelection.Id));
 
-            if (drinkDetailResult.IsSuccess && drinkDetailResult.Value != null)
+            if (drinkDetailResult.Value is null)
+            {
+                _output.OutputErrorMessage([Errors.GenericNull]);
+                continue;
+            }
+
+            if (drinkDetailResult.IsSuccess)
             {
                 _drinkDetails.Render(drinkDetailResult.Value, isFavorite, viewCount);
 
@@ -78,7 +82,6 @@ public class DrinkDetailService
             else
             {
                 _output.OutputErrorMessage(drinkDetailResult.Errors);
-                _input.PressAnyKeyToContinue();
             }
 
             if (exitCode == ExitCode.DrinkSelection || exitCode == ExitCode.CategorySelection ||
@@ -166,16 +169,21 @@ public class DrinkDetailService
         Console.Clear();
         var imageResult = await _getDrinkImageHandler.HandleAsync(url);
 
-        if (imageResult.IsSuccess && imageResult.Value != null)
+        if (imageResult.Value is null)
+        {
+            _output.OutputErrorMessage([Errors.GenericNull]);
+            return;
+        }
+
+        if (imageResult.IsSuccess)
         {
             Console.Clear();
             _drinkImage.Render(imageResult.Value);
-            _input.PressAnyKeyToContinue();
+            _output.PressAnyKeyToContinue();
         }
         else
         {
             _output.OutputErrorMessage(imageResult.Errors);
-            _input.PressAnyKeyToContinue();
         }
     }
     private async Task ManageAddFavorite(DrinkDetailResponse drinkDetails)
@@ -186,8 +194,6 @@ public class DrinkDetailService
             _output.PrintAddFavoriteSuccessMessage(drinkDetails.Name);
         else
             _output.OutputErrorMessage(addResult.Errors);
-
-        _input.PressAnyKeyToContinue();
     }
     private async Task ManageDeleteFavorite(DrinkDetailResponse drinkDetails)
     {
@@ -197,7 +203,5 @@ public class DrinkDetailService
             _output.PrintDeleteFavoriteSuccessMessage(drinkDetails.Name);
         else
             _output.OutputErrorMessage(deleteResult.Errors);
-
-        _input.PressAnyKeyToContinue();
     }
 }
