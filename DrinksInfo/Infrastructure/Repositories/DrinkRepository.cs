@@ -43,6 +43,10 @@ public class DrinkRepository : IDrinkRepository
         {
             return Result<List<Category>>.Failure(Errors.InvalidJson);
         }
+        catch (Exception ex)
+        {
+            return Result<List<Category>>.Failure(new Error("Unknown", ex.Message));
+        }
     }
 
     public async Task<Result<List<DrinkSummary>>> GetDrinkListByCategoryNameAsync(string categoryName)
@@ -71,6 +75,10 @@ public class DrinkRepository : IDrinkRepository
         catch (JsonException)
         {
             return Result<List<DrinkSummary>>.Failure(Errors.InvalidJson);
+        }
+        catch (Exception ex)
+        {
+            return Result<List<DrinkSummary>>.Failure(new Error("Unknown", ex.Message));
         }
     }
 
@@ -113,6 +121,10 @@ public class DrinkRepository : IDrinkRepository
         {
             return Result<Drink>.Failure(Errors.InvalidJson);
         }
+        catch (Exception ex)
+        {
+            return Result<Drink>.Failure(new Error("Unknown", ex.Message));
+        }
     }
 
     public async Task<Result<DrinkImageResponse>> GetDrinkImageAsync(string url)
@@ -134,6 +146,10 @@ public class DrinkRepository : IDrinkRepository
         catch (TaskCanceledException)
         {
             return Result<DrinkImageResponse>.Failure(Errors.Timeout);
+        }
+        catch (Exception ex)
+        {
+            return Result<DrinkImageResponse>.Failure(new Error("Unknown", ex.Message));
         }
     }
 

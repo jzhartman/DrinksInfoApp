@@ -25,7 +25,7 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
 
             var response = await connection.QuerySingleOrDefaultAsync<DrinkViewCount>(sql, new { Id = id });
 
-            if (response == null)
+            if (response is null)
                 return Result<DrinkViewCount>.Failure(Errors.GenericNull);
 
             return Result<DrinkViewCount>.Success(response);
@@ -34,6 +34,10 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         catch (SqliteException ex)
         {
             return Result<DrinkViewCount>.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result<DrinkViewCount>.Failure(new Error("Unknown", ex.Message));
         }
     }
 
@@ -46,9 +50,9 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         try
         {
             using var connection = _connection.CreateConnection();
-            var changed = await connection.ExecuteAsync(sql, new { Id = id });
+            var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
 
-            if (changed > 0)
+            if (rowsAffected > 0)
                 return Result.Success();
 
             return Result.Failure(Errors.UpdateFailed);
@@ -56,6 +60,10 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         catch (SqliteException ex)
         {
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(new Error("Unknown", ex.Message));
         }
     }
 
@@ -78,6 +86,10 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         {
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
         }
+        catch (Exception ex)
+        {
+            return Result.Failure(new Error("Unknown", ex.Message));
+        }
     }
 
     public async Task<Result> AddByDrinkIdAsync(int id)
@@ -87,9 +99,9 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         try
         {
             using var connection = _connection.CreateConnection();
-            var changed = await connection.ExecuteAsync(sql, new { DrinkId = id });
+            var rowsAffected = await connection.ExecuteAsync(sql, new { DrinkId = id });
 
-            if (changed > 0)
+            if (rowsAffected > 0)
                 return Result.Success();
             else
                 return Result.Failure(Errors.AddFailed);
@@ -97,6 +109,10 @@ public class DrinkViewCountRepository : IDrinkViewCountRepository
         catch (SqliteException ex)
         {
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(new Error("Unknown", ex.Message));
         }
     }
 

@@ -33,6 +33,10 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
         {
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
         }
+        catch (Exception ex)
+        {
+            return Result.Failure(new Error("Unknown", ex.Message));
+        }
     }
     public async Task<Result<List<FavoriteDrink>>> GetAllAsync()
     {
@@ -44,7 +48,7 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
 
             var response = await connection.QueryAsync<FavoriteDrink>(sql);
 
-            if (response.Count() == 0)
+            if (!response.Any())
                 return Result<List<FavoriteDrink>>.Failure(Errors.EmptyDbResponse);
 
             return Result<List<FavoriteDrink>>.Success(response.ToList());
@@ -52,6 +56,10 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
         catch (SqliteException ex)
         {
             return Result<List<FavoriteDrink>>.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result<List<FavoriteDrink>>.Failure(new Error("Unknown", ex.Message));
         }
     }
 
@@ -62,11 +70,9 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
         try
         {
             using var connection = _connection.CreateConnection();
-            connection.Execute(sql, drink);
+            var rowsAffected = connection.Execute(sql, drink);
 
-            var result = await ExistsByIdAsync((int)drink.DrinkId);
-
-            if (result.IsSuccess)
+            if (rowsAffected > 0)
                 return Result.Success();
             else
                 return Result.Failure(Errors.AddFailed);
@@ -74,6 +80,10 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
         catch (SqliteException ex)
         {
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(new Error("Unknown", ex.Message));
         }
     }
 
@@ -84,11 +94,9 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
         try
         {
             using var connection = _connection.CreateConnection();
-            connection.Execute(sql, new { Id = id });
+            var rowsAffected = connection.Execute(sql, new { Id = id });
 
-            var result = await ExistsByIdAsync(id);
-
-            if (result.IsFailure)
+            if (rowsAffected > 0)
                 return Result.Success();
             else
                 return Result.Failure(Errors.DeleteFailed);
@@ -96,6 +104,10 @@ public class FavoriteDrinkRepository : IFavoriteDrinkRepository
         catch (SqliteException ex)
         {
             return Result.Failure(new Error(ex.ErrorCode.ToString(), ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(new Error("Unknown", ex.Message));
         }
     }
 }
