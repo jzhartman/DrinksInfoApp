@@ -87,6 +87,9 @@ Full drink data is not saved, only the drink ID. Selecting a drink from this lis
 
 <img width="362" height="154" alt="image" src="https://github.com/user-attachments/assets/00280f70-49c4-4799-969c-a7e25168c7b7" />
 
+### Exit Application
+Selecting the Exit Application option from the main menu will exit the application.
 
+![Cheers-2](https://github.com/user-attachments/assets/7e557d2e-db35-4944-bd3f-3d893ffb112d)
 ## Project Requirements
 This project follows the guidelines for The C Sharp Academy Intermediate Console Application Drink Info as found here: https://www.thecsharpacademy.com/project/15/drinks
