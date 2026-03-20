@@ -14,6 +14,13 @@ public class FavoriteExistsByIdHandler
 
     public async Task<Result> HandleAsync(int id)
     {
-        return await _favoriteRepository.ExistsByIdAsync(id);
+        var result = await _favoriteRepository.ExistsByIdAsync(id);
+
+        if (result.IsFailure)
+            return Result.Failure(result.Errors);
+        if (result is null)
+            return Result.Failure([Errors.GenericNull]);
+        return
+            result;
     }
 }

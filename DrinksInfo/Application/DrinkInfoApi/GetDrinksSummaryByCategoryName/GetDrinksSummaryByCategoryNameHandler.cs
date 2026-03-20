@@ -16,10 +16,10 @@ public class GetDrinksSummaryByCategoryNameHandler
     {
         var result = await _drinkRepo.GetDrinkListByCategoryNameAsync(categoryName);
 
-        if (result.Value == null)
-            return Result<List<DrinkSummaryResponse>>.Failure(Errors.GenericNull);
         if (result.IsFailure)
-            return Result<List<DrinkSummaryResponse>>.Failure(result.Errors);
+            return Result<List<DrinkSummaryResponse>>.Failure(result.Errors.Prepend(Errors.GetDrinkSummaryFailed));
+        if (result?.Value is null)
+            return Result<List<DrinkSummaryResponse>>.Failure([Errors.GetDrinkSummaryFailed, Errors.GenericNull]);
         else
             return Result<List<DrinkSummaryResponse>>.Success(await MapToResponse(result.Value));
     }

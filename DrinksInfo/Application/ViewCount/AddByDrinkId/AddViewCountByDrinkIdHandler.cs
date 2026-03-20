@@ -16,7 +16,7 @@ public class AddViewCountByDrinkIdHandler
         var existsResult = await _viewCountRepo.ExistsByIdAsync(id);
 
         if (existsResult.IsSuccess)
-            return Result.Failure(Errors.AddFailed);
+            return Result.Failure([Errors.AddFailed, Errors.GenericExists]);
 
         return await _viewCountRepo.AddByDrinkIdAsync(id);
     }
