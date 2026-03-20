@@ -35,7 +35,6 @@ public class Messages
 
         AnsiConsole.Write(table);
     }
-
     public void InputErrorMessage()
     {
         AnsiConsole.MarkupLine("[red]ERROR:[/] Invalid key press! Please enter one of the displayed options.");
@@ -59,7 +58,6 @@ public class Messages
         AnsiConsole.MarkupLine($"[green]SUCCESS:[/] Deleted {name} from favorites list!");
         PressAnyKeyToContinue();
     }
-
     public void ExitMessage()
     {
         AnsiConsole.Status()
@@ -70,7 +68,6 @@ public class Messages
                 Console.ReadKey();
             });
     }
-
     public void PressAnyKeyToContinue()
     {
         Console.Write("Press any key to continue...");

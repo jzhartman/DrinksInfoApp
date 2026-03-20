@@ -32,11 +32,11 @@ public class FavoriteDrinkServices
             var favoriteListResult = await ConsoleStatusHelper.ShowStatusAsync("Fetching favorite drink list...", () =>
                                         _getAllFavoriteDrinksHandler.HandleAsync());
 
-            if (favoriteListResult.IsSuccess && favoriteListResult.Value != null)
+            if (favoriteListResult.IsSuccess && favoriteListResult.Value is not null)
             {
                 var drinkSelection = _favoriteDrinkList.Render(favoriteListResult.Value);
 
-                exitCode = await _drinkDetailService.ManageDrinkDetailsAsync(DrinkDetailEntryMode.Favorite,
+                exitCode = await _drinkDetailService.RunAsync(DrinkDetailEntryMode.Favorite,
                                                 new(drinkSelection.DrinkId, drinkSelection.Name, "", drinkSelection.Category));
             }
             else

@@ -4,7 +4,6 @@ using DrinksInfo.ConsoleUI.Enums;
 using DrinksInfo.ConsoleUI.Helpers;
 using DrinksInfo.ConsoleUI.Output;
 using DrinksInfo.ConsoleUI.Views;
-using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
@@ -35,7 +34,7 @@ public class CategoryListService
         var categoryListResult = await ConsoleStatusHelper.ShowStatusAsync("Fetching category list...", () =>
                                             _getCategoryListHandler.HandleAsync());
 
-        if (categoryListResult.IsSuccess && categoryListResult.Value != null)
+        if (categoryListResult.IsSuccess && categoryListResult.Value is not null)
             await ManageCategorySelection(categoryListResult.Value);
         else
             _messages.OutputErrorMessage(categoryListResult.Errors);
@@ -56,13 +55,7 @@ public class CategoryListService
             var drinksResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching drinks in {categorySelection}...", () =>
                                             _getDrinksHandler.HandleAsync(category[selectionIndex].Name));
 
-            if (drinksResult?.Value is null)
-            {
-                _messages.OutputErrorMessage([Errors.GenericNull]);
-                continue;
-            }
-
-            if (drinksResult.IsSuccess)
+            if (drinksResult.IsSuccess && drinksResult.Value is not null)
                 exitCode = await ManageDrinkDetails(category[selectionIndex].Name, drinksResult.Value);
             else
                 _messages.OutputErrorMessage(drinksResult.Errors);
@@ -83,7 +76,7 @@ public class CategoryListService
         {
             var drinkSelection = _drinkListSelection.Render(categoryName, drinks);
 
-            exitCode = await _drinkDetailService.ManageDrinkDetailsAsync(DrinkDetailEntryMode.Category, drinkSelection);
+            exitCode = await _drinkDetailService.RunAsync(DrinkDetailEntryMode.Category, drinkSelection);
 
             if (exitCode == ExitCode.CategorySelection || exitCode == ExitCode.MainMenu)
                 returnToCategoryMenu = true;

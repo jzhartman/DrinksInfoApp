@@ -43,13 +43,13 @@ public class DrinkDetailService
         _output = output;
     }
 
-    public async Task<ExitCode> ManageDrinkDetailsAsync(DrinkDetailEntryMode entryMode, DrinkSummaryResponse drinkSelection)
+    public async Task<ExitCode> RunAsync(DrinkDetailEntryMode entryMode, DrinkSummaryResponse drinkSelection)
     {
         var exitCode = ExitCode.None;
         bool returnToPreviousMenu = false;
         bool isFavorite = (await _favoriteExists.HandleAsync(drinkSelection.Id)).IsSuccess;
 
-        var viewCount = await _viewCountService.RunAsync(drinkSelection.Id);
+        var viewCountText = GenerateViewCountText(await _viewCountService.RunAsync(drinkSelection.Id));
 
         while (returnToPreviousMenu == false)
         {
@@ -57,15 +57,9 @@ public class DrinkDetailService
             var drinkDetailResult = await ConsoleStatusHelper.ShowStatusAsync($"Fetching {drinkSelection.Name} details...", () =>
                                             _getDrinkDetailsHandler.HandleAsync(drinkSelection.Id));
 
-            if (drinkDetailResult.Value is null)
+            if (drinkDetailResult.IsSuccess && drinkDetailResult.Value is not null)
             {
-                _output.OutputErrorMessage([Errors.GenericNull]);
-                continue;
-            }
-
-            if (drinkDetailResult.IsSuccess)
-            {
-                _drinkDetails.Render(drinkDetailResult.Value, isFavorite, viewCount);
+                _drinkDetails.Render(drinkDetailResult.Value, isFavorite, viewCountText);
 
                 Console.WriteLine();
                 Console.WriteLine();
@@ -82,6 +76,7 @@ public class DrinkDetailService
             else
             {
                 _output.OutputErrorMessage(drinkDetailResult.Errors);
+                break;
             }
 
             if (exitCode == ExitCode.DrinkSelection || exitCode == ExitCode.CategorySelection ||
@@ -169,13 +164,7 @@ public class DrinkDetailService
         Console.Clear();
         var imageResult = await _getDrinkImageHandler.HandleAsync(url);
 
-        if (imageResult.Value is null)
-        {
-            _output.OutputErrorMessage([Errors.GenericNull]);
-            return;
-        }
-
-        if (imageResult.IsSuccess)
+        if (imageResult.IsSuccess && imageResult.Value is not null)
         {
             Console.Clear();
             _drinkImage.Render(imageResult.Value);
@@ -203,5 +192,13 @@ public class DrinkDetailService
             _output.PrintDeleteFavoriteSuccessMessage(drinkDetails.Name);
         else
             _output.OutputErrorMessage(deleteResult.Errors);
+    }
+
+    private string GenerateViewCountText(Result<int> viewCountResult)
+    {
+        if (viewCountResult.IsSuccess && viewCountResult?.Value is not null)
+            return viewCountResult.Value.ToString();
+
+        return "<empty>";
     }
 }

@@ -2,6 +2,7 @@
 using DrinksInfo.Application.ViewCount.ExistsById;
 using DrinksInfo.Application.ViewCount.GetById;
 using DrinksInfo.Application.ViewCount.UpdateById;
+using DrinksInfo.Domain.Validation;
 
 namespace DrinksInfo.ConsoleUI.Services;
 
@@ -19,7 +20,7 @@ public class GetViewCountService
         _getViewCountHandler = getViewCountHandler;
         _addViewCountHandler = addViewCountHandler;
     }
-    public async Task<int> RunAsync(int drinkId)
+    public async Task<Result<int>> RunAsync(int drinkId)
     {
         bool viewCountExists = (await _viewCountExists.HandleAsync(drinkId)).IsSuccess;
 
@@ -32,19 +33,15 @@ public class GetViewCountService
                 var countResult = await _getViewCountHandler.HandleAsync(drinkId);
 
                 if (countResult.IsSuccess)
-                    return countResult.Value;
-                else
-                    return -1;
+                    return Result<int>.Success(countResult.Value);
             }
-            else
-            {
-                return -1;
-            }
+
+            return Result<int>.Failure(Errors.GetViewCountFailed);
         }
         else
         {
             await _addViewCountHandler.HandleAsync(drinkId);
-            return 1;
+            return Result<int>.Success(1);
         }
     }
 }
