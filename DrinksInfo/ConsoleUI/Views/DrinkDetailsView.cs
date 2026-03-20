@@ -5,9 +5,8 @@ namespace DrinksInfo.ConsoleUI.Views;
 
 public class DrinkDetailsView
 {
-    public void Render(DrinkDetailResponse drink, bool isFavorite, int viewCount)
+    public void Render(DrinkDetailResponse drink, bool isFavorite, string viewCountText)
     {
-        string viewCountText = (viewCount < 0) ? "[gray15]<ERROR>[/]" : viewCount.ToString();
         AnsiConsole.MarkupInterpolated($"[bold blue]Drink:[/] [bold underline green]{drink.Name}[/]");
 
         AnsiConsole.WriteLine();
@@ -43,7 +42,7 @@ public class DrinkDetailsView
 
         table.AddRow("[blue]Id:[/]", $"{drink.Id}", $"{spacing}", "[blue]Category:[/]", $"{drink.Category}");
         table.AddRow("[blue]Glass:[/]", $"{drink.Glass}", $"{spacing}", "[blue]Alcoholic:[/]", $"{drink.IsAlcoholic}");
-        table.AddRow("[blue]Favorite[/]", $"{isFavorite}", $"{spacing}", "[blue]View Count:[/]", $"{viewCountText}");
+        table.AddRow("[blue]Favorite:[/]", $"{isFavorite}", $"{spacing}", "[blue]View Count:[/]", $"{viewCountText}");
 
         return table;
     }
